@@ -1,15 +1,24 @@
+require("dotenv").config({
+  path: `.env.${process.env.NODE_ENV}`,
+})
+
 module.exports = {
   siteMetadata: {
-    title: `Gatsby Starter Blog`,
+    title: `Rachel's coding space`,
     author: {
-      name: `Kyle Mathews`,
-      summary: `who lives and works in San Francisco building useful things.`,
+      name: `Rachel Chen`,
+      summary: `who lives and works in Taipei, Taiwan.`,
     },
-    description: `A starter blog demonstrating what Gatsby can do.`,
+    description: `A web space for displaying portfolio projects showcase and sharing articles about web app coding such as Javascript、Vue、React.`,
     siteUrl: `https://gatsbystarterblogsource.gatsbyjs.io/`,
     social: {
-      twitter: `kylemathews`,
+      twitter: `rachelchen`,
+      instagram: `rachelchen8788`,
     },
+    nav: {
+      portfolio: `portfolio`,
+      blog: `blog`,
+    }
   },
   plugins: [
     `gatsby-plugin-image`,
@@ -128,5 +137,14 @@ module.exports = {
     // this (optional) plugin enables Progressive Web App + Offline functionality
     // To learn more, visit: https://gatsby.dev/offline
     // `gatsby-plugin-offline`,
+    {
+      resolve: `gatsby-source-notion-api`,
+      options: {
+        token: process.env.GATSBY_INTEGRATION_TOKEN,
+        databaseId: process.env.GATSBY_DATABASE_ID,
+        propsToFrontmatter: true,
+        lowerTitleLevel: true,
+      },
+    },
   ],
 }

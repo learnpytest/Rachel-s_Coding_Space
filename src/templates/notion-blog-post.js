@@ -55,14 +55,14 @@ const BlogPostTemplate = ({ data, location, pageContext }) => {
         >
           <li>
             {previous && (
-              <Link to={previous.fields.slug} rel="prev">
+              <Link to={previous.frontmatter.title} rel="prev">
                 ← {previous.frontmatter.title}
               </Link>
             )}
           </li>
           <li>
             {next && (
-              <Link to={next.fields.slug} rel="next">
+              <Link to={next.frontmatter.title} rel="next">
                 {next.frontmatter.title} →
               </Link>
             )}
@@ -77,7 +77,7 @@ const BlogPostTemplate = ({ data, location, pageContext }) => {
 export default BlogPostTemplate
 
 export const pageQuery = graphql`
-  query BlogPostBySlug(
+  query BlogPostById(
     $id: String!
     $previousPostId: String
     $nextPostId: String
@@ -98,17 +98,11 @@ export const pageQuery = graphql`
       }
     }
     previous: markdownRemark(id: { eq: $previousPostId }) {
-      fields {
-        slug
-      }
       frontmatter {
         title
       }
     }
     next: markdownRemark(id: { eq: $nextPostId }) {
-      fields {
-        slug
-      }
       frontmatter {
         title
       }

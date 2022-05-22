@@ -7,18 +7,37 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
   // Define a template for blog post
   const blogPost = path.resolve(`./src/templates/blog-post.js`)
 
+  // Define a template for notion blog post
+  const notionBlogPost = path.resolve(`./src/templates/notion-blog-post.js`)
+
+
   // Get all markdown blog posts sorted by date
   const result = await graphql(
     `
       {
-        allMarkdownRemark(
+        markdownPosts: allMarkdownRemark(
           sort: { fields: [frontmatter___date], order: ASC }
           limit: 1000
+          filter: { frontmatter: { slug: { nin: "blog/posts" } } }
         ) {
           nodes {
             id
             fields {
               slug
+            }
+            timeToRead
+          }
+        }
+        notionPosts: allMarkdownRemark(
+          sort: { fields: [frontmatter___date], order: ASC }
+          limit: 1000
+          filter: { frontmatter: { slug: { eq: "blog/posts" } } }
+        ) {
+          nodes {
+            id
+            timeToRead
+            frontmatter {
+              title
             }
           }
         }
@@ -34,7 +53,8 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
     return
   }
 
-  const posts = result.data.allMarkdownRemark.nodes
+  const posts = result.data.markdownPosts.nodes
+  const notionPosts = result.data.notionPosts.nodes
 
   // Create blog posts pages
   // But only if there's at least one markdown file found at "content/blog" (defined in gatsby-config.js)
@@ -52,6 +72,29 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
           id: post.id,
           previousPostId,
           nextPostId,
+          timeToRead: post.timeToRead,
+        },
+      })
+    })
+  }
+
+  // Create notion posts pages
+  // But only if there's at least one article found at notion source site (import by notion api)
+  // `context` is available in the template as a prop and as a variable in GraphQL
+  
+  if (notionPosts.length > 0) {
+    notionPosts.forEach((post, index) => {
+      const previousPostId = index === 0 ? null : notionPosts[index - 1].id
+      const nextPostId = index === notionPosts.length - 1 ? null : notionPosts[index + 1].id
+      
+      createPage({
+        path: "blog/" + post.frontmatter?.title,
+        component: notionBlogPost,
+        context: {
+          id: post.id,
+          previousPostId,
+          nextPostId,
+          timeToRead: post.timeToRead,
         },
       })
     })
@@ -61,7 +104,7 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
 exports.onCreateNode = ({ node, actions, getNode }) => {
   const { createNodeField } = actions
 
-  if (node.internal.type === `MarkdownRemark`) {
+  if (node.internal.type === `MarkdownRemark` && node.frontmatter?.slug !== `blog/posts`) {
     const value = createFilePath({ node, getNode })
 
     createNodeField({
@@ -86,6 +129,7 @@ exports.createSchemaCustomization = ({ actions }) => {
       author: Author
       siteUrl: String
       social: Social
+      nav: Nav
     }
 
     type Author {
@@ -95,6 +139,11 @@ exports.createSchemaCustomization = ({ actions }) => {
 
     type Social {
       twitter: String
+    }
+
+    type Nav {
+      portfolio: String
+      blog: String
     }
 
     type MarkdownRemark implements Node {

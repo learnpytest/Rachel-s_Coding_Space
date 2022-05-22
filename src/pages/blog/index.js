@@ -1,11 +1,11 @@
 import * as React from "react"
 import { Link, graphql } from "gatsby"
 
-import Bio from "../components/bio"
-import Layout from "../components/layout"
-import Seo from "../components/seo"
+import Bio from "../../components/bio"
+import Layout from "../../components/layout"
+import Seo from "../../components/seo"
 
-const PageIndex = ({ data, location }) => {
+const BlogIndex = ({ data, location }) => {
   const siteTitle = data.site.siteMetadata?.title || `Title`
   const posts = data.allMarkdownRemark.nodes
 
@@ -29,10 +29,10 @@ const PageIndex = ({ data, location }) => {
       <Bio />
       <ol style={{ listStyle: `none` }}>
         {posts.map(post => {
-          const title = post.frontmatter.title || post.fields.slug
+          const title = post.frontmatter.title || post.fields.slug || "No Title"
 
           return (
-            <li key={post.fields.slug} style={{position: "relative"}}>
+            <li key={post.frontmatter.title} style={{ position: "relative" }}>
               <article
                 className="post-list-item"
                 itemScope
@@ -40,7 +40,7 @@ const PageIndex = ({ data, location }) => {
               >
                 <header>
                   <h2>
-                    <Link to={post.fields.slug} itemProp="url">
+                    <Link to={post.frontmatter.title} itemProp="url">
                       <span itemProp="headline">{title}</span>
                     </Link>
                   </h2>
@@ -55,7 +55,18 @@ const PageIndex = ({ data, location }) => {
                   />
                 </section>
               </article>
-              <Link to={post.fields.slug} itemProp="url" style={{position: "absolute", top: "0", left: "0", bottom: "0", right: "0"}} className="backdrop"></Link>
+              <Link
+                to={post.frontmatter.title}
+                itemProp="url"
+                style={{
+                  position: "absolute",
+                  top: "0",
+                  left: "0",
+                  bottom: "0",
+                  right: "0",
+                }}
+                className="backdrop"
+              ></Link>
             </li>
           )
         })}
@@ -64,9 +75,9 @@ const PageIndex = ({ data, location }) => {
   )
 }
 
-export default PageIndex
+export default BlogIndex
 
-export const pageQuery = graphql`
+export const blogQuery = graphql`
   query {
     site {
       siteMetadata {
@@ -75,15 +86,12 @@ export const pageQuery = graphql`
     }
     allMarkdownRemark(
       sort: { fields: [frontmatter___date], order: DESC }
-      filter: {frontmatter: {slug: {nin: "blog/posts"}}}
-      ) {
+      filter: { frontmatter: { slug: { in: "blog/posts" } } }
+    ) {
       nodes {
         excerpt
-        fields {
-          slug
-        }
         frontmatter {
-          date(formatString: "MMMM DD, YYYY")
+          date: createdAt(formatString: "MMMM DD, YYYY")
           title
           description
         }

@@ -5,6 +5,8 @@ import "typeface-merriweather"
 import "./src/normalize.css"
 // custom CSS styles
 import "./src/style.css"
+// custom Nav CSS styles
+import "./src/style/nav.css"
 
 // Highlighting for code blocks
-import "prismjs/themes/prism.css"
+import "prismjs/themes/prism-okaidia.css"

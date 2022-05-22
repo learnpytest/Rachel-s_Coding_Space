@@ -55,11 +55,13 @@
   --fontSize-6: 2.488rem;
   --fontSize-7: 2.986rem;
   --color-primary: #005b99;
+  --color-secondary: #003A61;
   --color-text: #2e353f;
   --color-text-light: #4f5969;
   --color-heading: #1a202c;
   --color-heading-black: black;
   --color-accent: #d1dce5;
+  --color-background: #FCD0DA;
 }
 
 /* HTML elements */
@@ -75,6 +77,9 @@ html {
   font-size: var(--fontSize-root);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  /* custom website color of background */
+  background-color: var(--color-background);
 }
 
 body {
@@ -143,16 +148,16 @@ h6 {
   font-size: var(--fontSize-1);
 }
 
-h1 > a {
+h1>a {
   color: inherit;
   text-decoration: none;
 }
 
-h2 > a,
-h3 > a,
-h4 > a,
-h5 > a,
-h6 > a {
+h2>a,
+h3>a,
+h4>a,
+h5>a,
+h6>a {
   text-decoration: none;
   color: inherit;
 }
@@ -183,7 +188,7 @@ ol li {
   margin-bottom: calc(var(--spacing-8) / 2);
 }
 
-li > p {
+li>p {
   margin-bottom: calc(var(--spacing-8) / 2);
 }
 
@@ -191,7 +196,7 @@ li *:last-child {
   margin-bottom: var(--spacing-0);
 }
 
-li > ul {
+li>ul {
   margin-left: var(--spacing-8);
   margin-top: calc(var(--spacing-8) / 2);
 }
@@ -207,12 +212,12 @@ blockquote {
   margin-bottom: var(--spacing-8);
 }
 
-blockquote > :last-child {
+blockquote> :last-child {
   margin-bottom: var(--spacing-0);
 }
 
-blockquote > ul,
-blockquote > ol {
+blockquote>ul,
+blockquote>ol {
   list-style-position: inside;
 }
 
@@ -230,7 +235,7 @@ table thead tr th {
 /* Link */
 
 a {
-  color: var(--color-primary);
+  color: var(--color-secondary);
 }
 
 a:hover,
@@ -277,6 +282,15 @@ a:focus {
 
 .post-list-item header {
   margin-bottom: var(--spacing-4);
+}
+
+.post-list-item~.backdrop {
+  transition: background-color .5s;
+}
+
+.post-list-item~.backdrop:hover {
+  opacity: 0.7;
+  background-color: rgba(0, 0, 0, 0.08);
 }
 
 .header-link-home {
@@ -326,6 +340,7 @@ a:focus {
     padding: var(--spacing-0) var(--spacing-0) var(--spacing-0) var(--spacing-4);
     margin-left: var(--spacing-0);
   }
+
   ul,
   ol {
     list-style-position: inside;
