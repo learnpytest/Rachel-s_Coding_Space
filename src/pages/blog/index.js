@@ -29,10 +29,10 @@ const BlogIndex = ({ data, location }) => {
       <Bio />
       <ol style={{ listStyle: `none` }}>
         {posts.map(post => {
-          const title = post.frontmatter.title || post.fields?.slug || "No Title"
+          const title = post.frontmatter.title || post.fields?.slug || "NoTitle"
 
           return (
-            <li key={post.frontmatter.title} style={{ position: "relative" }}>
+            <li key={post.id} style={{ position: "relative" }}>
               <article
                 className="post-list-item"
                 itemScope
@@ -40,7 +40,7 @@ const BlogIndex = ({ data, location }) => {
               >
                 <header>
                   <h2>
-                    <Link to={post.frontmatter.title} itemProp="url">
+                    <Link to={title === "NoTitle" ? post.id : title} itemProp="url">
                       <span itemProp="headline">{title}</span>
                     </Link>
                   </h2>
@@ -56,7 +56,7 @@ const BlogIndex = ({ data, location }) => {
                 </section>
               </article>
               <Link
-                to={post.frontmatter.title}
+                to={title === "NoTitle" ? post.id : title}
                 itemProp="url"
                 style={{
                   position: "absolute",
@@ -89,6 +89,7 @@ export const blogQuery = graphql`
       filter: { frontmatter: { slug: { in: "blog/posts" } } }
     ) {
       nodes {
+        id
         excerpt
         frontmatter {
           date: createdAt(formatString: "MMMM DD, YYYY")

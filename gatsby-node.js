@@ -66,7 +66,7 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
       const nextPostId = index === posts.length - 1 ? null : posts[index + 1].id
 
       createPage({
-        path: post.fields.slug,
+        path: post.fields?.slug,
         component: blogPost,
         context: {
           id: post.id,
@@ -83,18 +83,19 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
   // `context` is available in the template as a prop and as a variable in GraphQL
   
   if (notionPosts.length > 0) {
-    notionPosts.forEach((notionPost, index) => {
+    notionPosts.forEach((post, index) => {
       const previousPostId = index === 0 ? null : notionPosts[index - 1].id
       const nextPostId = index === notionPosts.length - 1 ? null : notionPosts[index + 1].id
-      
+      const postPath = post.frontmatter?.title ? post.frontmatter?.title : post.id
+
       createPage({
-        path: "blog/" + notionPost.frontmatter?.title,
+        path: "blog/" + postPath,
         component: notionBlogPost,
         context: {
-          id: notionPost.id,
+          id: post.id,
           previousPostId,
           nextPostId,
-          timeToRead: notionPost.timeToRead,
+          timeToRead: post.timeToRead,
         },
       })
     })
@@ -103,9 +104,13 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
 
 exports.onCreateNode = ({ node, actions, getNode }) => {
   const { createNodeField } = actions
-
-  if (node.internal.type === `MarkdownRemark` && node.frontmatter?.slug !== `blog/posts`) {
-    const value = createFilePath({ node, getNode })
+  let value
+  if (node.internal.type === `MarkdownRemark`) {
+    if(node.frontmatter?.slug === `blog/posts`) {
+    value = ""
+  } else {
+    value = createFilePath({ node, getNode }) || ""
+  }
 
     createNodeField({
       name: `slug`,

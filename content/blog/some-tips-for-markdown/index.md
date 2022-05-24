@@ -4,11 +4,11 @@ date: "2022-05-22T15:45:03.284Z"
 description: "Some Tips for Markdown"
 ---
 
-This is my first post on my new fake blog! How exciting!
+Markdown is a lightweight markup language to create formatted text and can be transferred to HTML or XHTML.
 
-I'm sure I'll write a lot more interesting things in the future.
+As follows are some tips for creating formatted text by Markdown.
 
-Oh, and here's a great quote from this Wikipedia on
+First, insert a great quote from this Wikipedia on
 [salted duck eggs](https://en.wikipedia.org/wiki/Salted_duck_egg).
 
 > A salted duck egg is a Chinese preserved food product made by soaking duck
