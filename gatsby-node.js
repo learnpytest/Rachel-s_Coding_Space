@@ -83,18 +83,18 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
   // `context` is available in the template as a prop and as a variable in GraphQL
   
   if (notionPosts.length > 0) {
-    notionPosts.forEach((post, index) => {
+    notionPosts.forEach((notionPost, index) => {
       const previousPostId = index === 0 ? null : notionPosts[index - 1].id
       const nextPostId = index === notionPosts.length - 1 ? null : notionPosts[index + 1].id
       
       createPage({
-        path: "blog/" + post.frontmatter?.title,
+        path: "blog/" + notionPost.frontmatter?.title,
         component: notionBlogPost,
         context: {
-          id: post.id,
+          id: notionPost.id,
           previousPostId,
           nextPostId,
-          timeToRead: post.timeToRead,
+          timeToRead: notionPost.timeToRead,
         },
       })
     })
