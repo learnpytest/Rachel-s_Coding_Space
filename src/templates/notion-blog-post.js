@@ -9,7 +9,7 @@ import Seo from "../components/seo"
 const BlogPostTemplate = ({ data, location, pageContext }) => {
   const post = data.markdownRemark
   const siteTitle = data.site.siteMetadata?.title || `Title`
-  const postTitle = post.frontmatter?.title || "NoTitle"
+  const postTitle = post.frontmatter?.title || "No Title"
 
   const { previous, next } = data
   const { timeToRead } = pageContext
@@ -58,14 +58,14 @@ const BlogPostTemplate = ({ data, location, pageContext }) => {
           <li>
             {previous && (
               <Link to={`/blog/${previous.frontmatter.title || previous.id}`} rel="prev">
-                ← {previous.frontmatter.title || "NoTitle"}
+                ← {previous.frontmatter.title || "No Title"}
               </Link>
             )}
           </li>
           <li>
             {next && (
               <Link to={`/blog/${next.frontmatter.title || next.id}`} rel="next">
-                {next.frontmatter.title || "NoTitle"} →
+                {next.frontmatter.title || "No Title"} →
               </Link>
             )}
           </li>

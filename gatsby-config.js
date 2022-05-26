@@ -16,8 +16,9 @@ module.exports = {
       instagram: `rachelchen8788`,
     },
     nav: {
-      portfolio: `portfolio`,
-      blog: `blog`,
+      portfolio: `Portfolio`,
+      blog: `Blog`,
+      categories: `Categories`
     }
   },
   plugins: [

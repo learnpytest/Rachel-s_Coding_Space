@@ -1,5 +1,6 @@
 const path = require(`path`)
 const { createFilePath } = require(`gatsby-source-filesystem`)
+const _ = require("lodash")
 
 exports.createPages = async ({ graphql, actions, reporter }) => {
   const { createPage } = actions
@@ -10,6 +11,8 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
   // Define a template for notion blog post
   const notionBlogPost = path.resolve(`./src/templates/notion-blog-post.js`)
 
+  // Define a template for tag that has posts tagged with this
+  const taggedPostsPage = path.resolve(`./src/templates/tag-page.js`)
 
   // Get all markdown blog posts sorted by date
   const result = await graphql(
@@ -41,6 +44,11 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
             }
           }
         }
+        tagsGroup: allMarkdownRemark(limit: 2000) {
+          group(field: frontmatter___tags) {
+            fieldValue
+          }
+        }
       }
     `
   )
@@ -55,6 +63,7 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
 
   const posts = result.data.markdownPosts.nodes
   const notionPosts = result.data.notionPosts.nodes
+  const tagsGroup = result.data.tagsGroup.group
 
   // Create blog posts pages
   // But only if there's at least one markdown file found at "content/blog" (defined in gatsby-config.js)
@@ -81,12 +90,15 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
   // Create notion posts pages
   // But only if there's at least one article found at notion source site (import by notion api)
   // `context` is available in the template as a prop and as a variable in GraphQL
-  
+
   if (notionPosts.length > 0) {
     notionPosts.forEach((post, index) => {
       const previousPostId = index === 0 ? null : notionPosts[index - 1].id
-      const nextPostId = index === notionPosts.length - 1 ? null : notionPosts[index + 1].id
-      const postPath = post.frontmatter?.title ? post.frontmatter?.title : post.id
+      const nextPostId =
+        index === notionPosts.length - 1 ? null : notionPosts[index + 1].id
+      const postPath = post.frontmatter?.title
+        ? post.frontmatter?.title
+        : post.id
 
       createPage({
         path: "blog/" + postPath,
@@ -100,17 +112,38 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
       })
     })
   }
+
+  // Create pages that are already categorized by tags
+  // But only if there's at least one tag found at tag group
+  // `context` is available in the template as a prop and as a variable in GraphQL
+  if (tagsGroup.length > 0) {
+    let newTagsGroup = []
+    tagsGroup.forEach(tags => {
+      const tagsArray = tags.fieldValue.split(",")
+      newTagsGroup = [...new Set([...tagsArray, ...newTagsGroup])]
+    })
+
+    newTagsGroup.forEach(tag => {
+      createPage({
+        path: `/categories/${_.kebabCase(tag)}/`,
+        component: taggedPostsPage,
+        context: {
+          tag: `/${tag}/`,
+        },
+      })
+    })
+  }
 }
 
 exports.onCreateNode = ({ node, actions, getNode }) => {
   const { createNodeField } = actions
   let value
   if (node.internal.type === `MarkdownRemark`) {
-    if(node.frontmatter?.slug === `blog/posts`) {
-    value = ""
-  } else {
-    value = createFilePath({ node, getNode }) || ""
-  }
+    if (node.frontmatter?.slug === `blog/posts`) {
+      value = ""
+    } else {
+      value = createFilePath({ node, getNode }) || ""
+    }
 
     createNodeField({
       name: `slug`,
@@ -149,9 +182,10 @@ exports.createSchemaCustomization = ({ actions }) => {
     type Nav {
       portfolio: String
       blog: String
+      categories: String
     }
 
-    type MarkdownRemark implements Node {
+    type MarkdownRemark implements Node{
       frontmatter: Frontmatter
       fields: Fields
     }
@@ -160,6 +194,7 @@ exports.createSchemaCustomization = ({ actions }) => {
       title: String
       description: String
       date: Date @dateformat
+      tags: String
     }
 
     type Fields {

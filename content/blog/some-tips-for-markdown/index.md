@@ -1,7 +1,10 @@
 ---
 title: Some Tips for Markdown
 date: "2022-05-22T15:45:03.284Z"
+year: "2022"
+month: "05"
 description: "Some Tips for Markdown"
+tags: General
 ---
 
 Markdown is a lightweight markup language to create formatted text and can be transferred to HTML or XHTML.

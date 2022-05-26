@@ -7,6 +7,7 @@ import "./src/normalize.css"
 import "./src/style.css"
 // custom Nav CSS styles
 import "./src/style/nav.css"
+import "./src/style/category.css"
 
 // Highlighting for code blocks
 import "prismjs/themes/prism-okaidia.css"
