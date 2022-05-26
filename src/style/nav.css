@@ -39,7 +39,8 @@
 }
 
 [data-activescrolling="true"] .header-diaglog {
-  right: 10%;
+  top: 50px;
+  right: 5%;
   background-color: var(--color-background);
-  transition: 0.5s;
+  transition: right 0.5s;
 }

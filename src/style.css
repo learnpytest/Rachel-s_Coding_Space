@@ -287,6 +287,8 @@ a:focus {
 
 .post-list-item~.backdrop {
   transition: background-color .5s;
+  border-radius: 8px;
+  z-index: 2;
 }
 
 .post-list-item~.backdrop:hover {

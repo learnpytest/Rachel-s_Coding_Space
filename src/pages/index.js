@@ -55,7 +55,7 @@ const PageIndex = ({ data, location }) => {
                   />
                 </section>
               </article>
-              <Link to={post.fields.slug} itemProp="url" style={{position: "absolute", top: "0", left: "0", bottom: "0", right: "0"}} className="backdrop"></Link>
+              <Link to={post.fields.slug} itemProp="url" style={{position: "absolute", top: "-10px", left: "-10px", bottom: "-10px", right: "-10px"}} className="backdrop"></Link>
             </li>
           )
         })}
