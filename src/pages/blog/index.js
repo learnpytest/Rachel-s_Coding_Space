@@ -5,6 +5,8 @@ import Bio from "../../components/bio"
 import Layout from "../../components/layout"
 import Seo from "../../components/seo"
 
+import kebabCase from "lodash/kebabCase"
+
 const BlogIndex = ({ data, location }) => {
   const siteTitle = data.site.siteMetadata?.title || `Title`
   const posts = data.allMarkdownRemark.nodes
@@ -29,7 +31,7 @@ const BlogIndex = ({ data, location }) => {
       <Bio />
       <ol style={{ listStyle: `none` }}>
         {posts.map(post => {
-          const title = post.frontmatter.title || post.fields?.slug || "NoTitle"
+          const title = post.frontmatter.title || "NoTitle"
 
           return (
             <li key={post.id} style={{ position: "relative" }}>
@@ -40,9 +42,7 @@ const BlogIndex = ({ data, location }) => {
               >
                 <header>
                   <h2>
-                    <Link to={title === "NoTitle" ? post.id : title} itemProp="url">
                       <span itemProp="headline">{title}</span>
-                    </Link>
                   </h2>
                   <small>{post.frontmatter.date}</small>
                 </header>
@@ -55,8 +55,9 @@ const BlogIndex = ({ data, location }) => {
                   />
                 </section>
               </article>
+         
               <Link
-                to={title === "NoTitle" ? post.id : title}
+                to={`/blog/${kebabCase(post.fields?.slug)}`}
                 itemProp="url"
                 style={{
                   position: "absolute",
@@ -85,12 +86,15 @@ export const blogQuery = graphql`
       }
     }
     allMarkdownRemark(
-      sort: { fields: [frontmatter___date], order: DESC }
-      filter: { frontmatter: { slug: { in: "blog/posts" } } }
+      sort: { fields: [frontmatter___createdAt], order: DESC }
+      filter: { frontmatter: { source: { in: "notion" } } }
     ) {
       nodes {
         id
         excerpt
+        fields {
+          slug
+        }
         frontmatter {
           date: createdAt(formatString: "MMMM DD, YYYY")
           title

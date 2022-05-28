@@ -8,9 +8,6 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
   // Define a template for blog post
   const blogPost = path.resolve(`./src/templates/blog-post.js`)
 
-  // Define a template for notion blog post
-  const notionBlogPost = path.resolve(`./src/templates/notion-blog-post.js`)
-
   // Define a template for tag that has posts tagged with this
   const taggedPostsPage = path.resolve(`./src/templates/tag-page.js`)
 
@@ -19,9 +16,9 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
     `
       {
         markdownPosts: allMarkdownRemark(
-          sort: { fields: [frontmatter___date], order: ASC }
+          sort: { fields: [frontmatter___createdAt], order: DESC }
+          filter: { frontmatter: { source: { nin: "notion" } } }
           limit: 1000
-          filter: { frontmatter: { slug: { nin: "blog/posts" } } }
         ) {
           nodes {
             id
@@ -29,18 +26,28 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
               slug
             }
             timeToRead
+            frontmatter {
+              title
+              slug
+              source
+            }
           }
         }
         notionPosts: allMarkdownRemark(
-          sort: { fields: [frontmatter___date], order: ASC }
+          sort: { fields: [frontmatter___createdAt], order: DESC }
+          filter: { frontmatter: { source: { in: "notion" } } }
           limit: 1000
-          filter: { frontmatter: { slug: { eq: "blog/posts" } } }
         ) {
           nodes {
             id
+            fields {
+              slug
+            }
             timeToRead
             frontmatter {
               title
+              slug
+              source
             }
           }
         }
@@ -69,13 +76,15 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
   // But only if there's at least one markdown file found at "content/blog" (defined in gatsby-config.js)
   // `context` is available in the template as a prop and as a variable in GraphQL
 
-  if (posts.length > 0) {
-    posts.forEach((post, index) => {
-      const previousPostId = index === 0 ? null : posts[index - 1].id
-      const nextPostId = index === posts.length - 1 ? null : posts[index + 1].id
+  function createPageByPostTemplate(_data, _pathPrefix) {
+    if (!_data.length) return
+      _data.forEach((post, index) => {
+      const previousPostId = index === 0 ? null : _data[index - 1].id
+      const nextPostId = index === _data.length - 1 ? null : _data[index + 1].id
+      const path = _pathPrefix ? `/${_pathPrefix}/${_.kebabCase(post.fields?.slug)}` : _.kebabCase(post.fields?.slug)
 
       createPage({
-        path: post.fields?.slug,
+        path,
         component: blogPost,
         context: {
           id: post.id,
@@ -87,31 +96,47 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
     })
   }
 
-  // Create notion posts pages
-  // But only if there's at least one article found at notion source site (import by notion api)
-  // `context` is available in the template as a prop and as a variable in GraphQL
+  createPageByPostTemplate(posts, null)
+  createPageByPostTemplate(notionPosts, "blog")
 
-  if (notionPosts.length > 0) {
-    notionPosts.forEach((post, index) => {
-      const previousPostId = index === 0 ? null : notionPosts[index - 1].id
-      const nextPostId =
-        index === notionPosts.length - 1 ? null : notionPosts[index + 1].id
-      const postPath = post.frontmatter?.title
-        ? post.frontmatter?.title
-        : post.id
 
-      createPage({
-        path: "blog/" + postPath,
-        component: notionBlogPost,
-        context: {
-          id: post.id,
-          previousPostId,
-          nextPostId,
-          timeToRead: post.timeToRead,
-        },
-      })
-    })
-  }
+  // if (posts.length > 0) {
+  //   posts.forEach((post, index) => {
+  //     const previousPostId = index === 0 ? null : posts[index - 1].id
+  //     const nextPostId = index === posts.length - 1 ? null : posts[index + 1].id
+  //     const path = _.kebabCase(post.fields?.slug)
+
+  //     createPage({
+  //       path,
+  //       component: blogPost,
+  //       context: {
+  //         id: post.id,
+  //         previousPostId,
+  //         nextPostId,
+  //         timeToRead: post.timeToRead,
+  //       },
+  //     })
+  //   })
+  // }
+
+  // if (notionPosts.length > 0) {
+  //   notionPosts.forEach((post, index) => {
+  //     const previousPostId = index === 0 ? null : notionPosts[index - 1].id
+  //     const nextPostId = index === notionPosts.length - 1 ? null : notionPosts[index + 1].id
+  //     const path = `/blog/${_.kebabCase(post.fields?.slug)}`
+
+  //     createPage({
+  //       path,
+  //       component: blogPost,
+  //       context: {
+  //         id: post.id,
+  //         previousPostId,
+  //         nextPostId,
+  //         timeToRead: post.timeToRead,
+  //       },
+  //     })
+  //   })
+  // }
 
   // Create pages that are already categorized by tags
   // But only if there's at least one tag found at tag group
@@ -139,12 +164,11 @@ exports.onCreateNode = ({ node, actions, getNode }) => {
   const { createNodeField } = actions
   let value
   if (node.internal.type === `MarkdownRemark`) {
-    if (node.frontmatter?.slug === `blog/posts`) {
-      value = ""
-    } else {
+    if (node.frontmatter?.source === `file`) {
       value = createFilePath({ node, getNode }) || ""
+    } else {
+      value = node.frontmatter?.slug
     }
-
     createNodeField({
       name: `slug`,
       node,
@@ -192,8 +216,10 @@ exports.createSchemaCustomization = ({ actions }) => {
 
     type Frontmatter {
       title: String
+      slug: String
       description: String
-      date: Date @dateformat
+      createdAt: Date @dateformat
+      source: String
       tags: String
     }
 

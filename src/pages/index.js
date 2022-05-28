@@ -44,7 +44,7 @@ const PageIndex = ({ data, location }) => {
                       <span itemProp="headline">{title}</span>
                     </Link>
                   </h2>
-                  <small>{post.frontmatter.date}</small>
+                  <small>{post.frontmatter.createdAt}</small>
                 </header>
                 <section>
                   <p
@@ -74,8 +74,8 @@ export const pageQuery = graphql`
       }
     }
     allMarkdownRemark(
-      sort: { fields: [frontmatter___date], order: DESC }
-      filter: {frontmatter: {slug: {nin: "blog/posts"}}}
+      sort: { fields: [frontmatter___createdAt], order: DESC }
+      filter: {frontmatter: {source: {nin: "notion"}}}
       ) {
       nodes {
         excerpt
@@ -83,7 +83,7 @@ export const pageQuery = graphql`
           slug
         }
         frontmatter {
-          date(formatString: "MMMM DD, YYYY")
+          createdAt(formatString: "MMMM DD, YYYY")
           title
           description
         }

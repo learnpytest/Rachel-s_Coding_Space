@@ -6,10 +6,14 @@ import Bio from "../components/bio"
 import Layout from "../components/layout"
 import Seo from "../components/seo"
 
+import kebabCase from "lodash/kebabCase"
+
 const BlogPostTemplate = ({ data, location, pageContext }) => {
   const post = data.markdownRemark
   const siteTitle = data.site.siteMetadata?.title || `Title`
   const { previous, next } = data
+  const previousPath = previous?.frontmatter.source === `notion` ? `/blog/${kebabCase(previous?.fields.slug)}` : `/${kebabCase(previous?.fields.slug)}`
+  const nextPath = next?.frontmatter.source === `notion` ? `/blog/${kebabCase(next?.fields.slug)}` : `/${kebabCase(next?.fields.slug)}`
   const { timeToRead } = pageContext
 
   const disqusConfig = {
@@ -31,7 +35,7 @@ const BlogPostTemplate = ({ data, location, pageContext }) => {
         <header>
           <h1 itemProp="headline">{post.frontmatter.title}</h1>
           <p>
-            {post.frontmatter.date} - {timeToRead} mins to read
+            {post.frontmatter.createdAt} - {timeToRead} mins to read
           </p>
         </header>
         <section
@@ -55,14 +59,14 @@ const BlogPostTemplate = ({ data, location, pageContext }) => {
         >
           <li>
             {previous && (
-              <Link to={previous.fields.slug} rel="prev">
+              <Link to={previousPath} rel="prev">
                 ← {previous.frontmatter.title}
               </Link>
             )}
           </li>
           <li>
             {next && (
-              <Link to={next.fields.slug} rel="next">
+              <Link to={nextPath} rel="next">
                 {next.frontmatter.title} →
               </Link>
             )}
@@ -93,7 +97,7 @@ export const pageQuery = graphql`
       html
       frontmatter {
         title
-        date(formatString: "MMMM DD, YYYY")
+        createdAt(formatString: "MMMM DD, YYYY")
         description
       }
     }
@@ -103,6 +107,7 @@ export const pageQuery = graphql`
       }
       frontmatter {
         title
+        source
       }
     }
     next: markdownRemark(id: { eq: $nextPostId }) {
@@ -111,6 +116,7 @@ export const pageQuery = graphql`
       }
       frontmatter {
         title
+        source
       }
     }
   }

@@ -5,6 +5,8 @@ import Layout from "../components/layout"
 import Seo from "../components/seo"
 import Bio from "../components/bio"
 
+import kebabCase from "lodash/kebabCase"
+
 const tagPage = ({ pageContext, data, location }) => {
   const siteTitle = data.site.siteMetadata.title
   const { tag } = pageContext
@@ -34,13 +36,14 @@ const tagPage = ({ pageContext, data, location }) => {
                   <h3 className="fieldYear">{fieldValue}</h3>
                   <ul>
                     {nodes.length &&
-                      nodes.map(({ frontmatter }) => {
-                        const {title, slug, createdAt, date} = frontmatter
-                        const dateTime = createdAt || date
+                      nodes.map(({ frontmatter, fields }) => {
+                        const {title, createdAt, source} = frontmatter
+                        const { slug } = fields
+                        const path = source === `notion` ? `/blog/${kebabCase(slug)}` : `/${kebabCase(slug)}`
                         return (
                           <li key={title}>
-                            <Link to={slug ? slug : `/blog/${title}`}>
-                              {dateTime} - {title ? title : `No Title`}
+                            <Link to={path}>
+                              {createdAt} - {title ? title : `No Title`}
                             </Link>
                           </li>
                         )
@@ -67,7 +70,7 @@ export const tagQuery = graphql`
     }
     allMarkdownRemark(
       limit: 2000
-      sort: { fields: [frontmatter___date], order: DESC }
+      sort: { fields: [frontmatter___createdAt], order: DESC }
       filter: { frontmatter: { tags: { regex: $tag } } }
     ) {
       totalCount
@@ -80,7 +83,7 @@ export const tagQuery = graphql`
           frontmatter {
             title
             createdAt(formatString: "MM-DD")
-            date(formatString: "MM-DD")
+            source
           }
         }
       }
