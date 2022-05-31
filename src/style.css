@@ -62,7 +62,11 @@
   --color-heading: #1a202c;
   --color-heading-black: black;
   --color-accent: #d1dce5;
+  --color-accent-DDDDE9: #DDDDE9;
+  --color-accent-424242: #424242;
+  --color-highlight-FFD68A: #FFD68A;
   --color-background: #FCD0DA;
+  --color-background-004675: #004675;
 }
 
 /* HTML elements */

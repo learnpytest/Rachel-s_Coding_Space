@@ -2,6 +2,72 @@ require("dotenv").config({
   path: `.env.${process.env.NODE_ENV}`,
 })
 
+const striptags = require("striptags")
+
+const blogAlgoliaQuery = `
+  query {
+    pages: allMarkdownRemark(limit: 1000) {
+      nodes {
+        id
+        fields {
+          slug
+        }
+        excerpt
+        frontmatter {
+          title
+          date: createdAt(formatString: "MMMM DD, YYYY")
+          description
+          source
+        }
+        html
+      }
+    }
+  }
+`
+const queries = [
+  {
+    query: blogAlgoliaQuery,
+    transformer: ({ data }) => {
+      // 1 break each post into an array of searchable chunks
+      // 2 return a flattened array of all indices
+      return data.pages.nodes.reduce((indices, post) => {
+        // 1 description (if it exists)
+        // 2 each paragraph
+        const paragraphChunks = striptags(
+          post.html,
+          ["\n"]
+        ).split("\n").filter(paragraphChunk => !!paragraphChunk.trim() && paragraphChunk.trim() !== "\n")
+
+        // const paragraphChunks = striptags(post.html, [], "XXX_SPLITER").split("XXX_SPLITER").filter(chnk => !!chnk.trim() && chnk.trim()!== '\n' && chnk.trim() !== '(' && chnk.trim() !== ')' && chnk.trim() !== ':' && chnk.trim() !== '{' && chnk.trim() !== '}' && chnk.trim() !== ',' && chnk.trim() !== '=>' && chnk.trim() !== ',')
+
+        const chunks = paragraphChunks.map((chnk, index) => ({
+          id: post.id + index,
+          slug: post.fields.slug,
+          date: post.frontmatter.date,
+          title: post.frontmatter.title,
+          source: post.frontmatter.source,
+          excerpt: chnk,
+        }))
+
+        if (post.frontmatter.description) {
+          chunks.push({
+            id: post.id + new Date().getTime(),
+            slug: post.fields.slug,
+            date: post.frontmatter.date,
+            title: post.frontmatter.title,
+            source: post.frontmatter.source,
+            excerpt: post.frontmatter.excerpt,
+          })
+        }
+
+        const filtered = chunks.filter(chnk => !!chnk.excerpt)
+
+        return [...indices, ...filtered]
+      }, [])
+    },
+  },
+]
+
 module.exports = {
   siteMetadata: {
     title: `Rachel's coding space`,
@@ -18,11 +84,25 @@ module.exports = {
     nav: {
       portfolio: `Portfolio`,
       blog: `Blog`,
-      categories: `Categories`
-    }
+      categories: `Categories`,
+    },
   },
   plugins: [
     `gatsby-plugin-image`,
+    `gatsby-plugin-sharp`,
+    `gatsby-transformer-sharp`,
+    {
+      resolve: `gatsby-plugin-algolia`,
+      options: {
+        appId: process.env.ALGOLIA_APP_ID,
+        // Use Admin API key without GATSBY_ prefix, so that the key isn't exposed in the application
+        // Tip: use Search API key with GATSBY_ prefix to access the service from within components
+        apiKey: process.env.ALGOLIA_API_KEY,
+        indexName: process.env.ALGOLIA_INDEX_NAME, // for all queries
+        queries,
+        chunkSize: 10000, // default: 1000
+      },
+    },
     {
       resolve: `gatsby-source-filesystem`,
       options: {
@@ -59,8 +139,7 @@ module.exports = {
         ],
       },
     },
-    `gatsby-transformer-sharp`,
-    `gatsby-plugin-sharp`,
+
     // {
     //   resolve: `gatsby-plugin-google-analytics`,
     //   options: {

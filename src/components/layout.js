@@ -1,6 +1,7 @@
 import * as React from "react"
 import { useState, useEffect } from "react"
 import { Link } from "gatsby"
+
 import Nav from "./nav"
 import DiaglogNav from "./diaglogNav"
 
@@ -59,7 +60,8 @@ const Layout = ({ location, title, children }) => {
       data-is-root-path={isRootPath} 
     >
       <header className="global-header" data-activescrolling={state.scrolled}>{header}<DiaglogNav /></header>
-      <main>{children}</main>
+      <main>
+        {children}</main>
       <footer>
         © {new Date().getFullYear()}, Built with
         {` `}

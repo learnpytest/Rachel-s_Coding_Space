@@ -41,6 +41,7 @@
 [data-activescrolling="true"] .header-diaglog {
   top: 50px;
   right: 5%;
-  background-color: var(--color-background);
+  z-index: 3;
+  /* background-color: var(--color-background); */
   transition: right 0.5s;
 }
