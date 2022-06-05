@@ -1,0 +1,25 @@
+.dialog {
+  position: fixed;
+  right: -100%;
+  top: 0;
+  z-index: 2;
+  transition: 0s;
+}
+
+[data-activescrolling="true"] .dialog {
+  top: 50px;
+  right: 5%;
+  z-index: 3;
+  transition: right 0.5s;
+}
+
+[data-activescrolling="true"] .dialog li {
+  display: block;
+}
+
+.header-link-home {
+  font-weight: var(--fontWeight-bold);
+  font-family: var(--font-heading);
+  text-decoration: none;
+  font-size: var(--fontSize-2);
+}

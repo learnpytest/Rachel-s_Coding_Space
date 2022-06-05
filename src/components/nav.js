@@ -7,6 +7,8 @@
 
 import * as React from "react"
 import { useStaticQuery, graphql, Link } from "gatsby"
+
+import * as navStyle from "./nav.module.css"
 import kebabCase from "lodash/kebabCase"
 
 const Nav = () => {
@@ -18,6 +20,7 @@ const Nav = () => {
             portfolio
             blog
             categories
+            rss
           }
         }
       }
@@ -30,17 +33,19 @@ const Nav = () => {
   return (
     <>
       {navLinks && (
-        <ul className="nav-list" style={{ listStyle: `none` }}>
+        <ul className={navStyle.mainNavList} style={{ listStyle: `none` }}>
           {Object.entries(navLinks).map(([key, value]) => {
+            const path = value === `RSS File` ? `rss.xml` : kebabCase(value)            
             return (
-              <li key={key}>
+              <li key={key} className={`${navStyle.mainNavItem} main-nav-item`}>
                 <Link
-                  to={`/${kebabCase(value)}`}
+                  to={`/${path}`}
                   activeStyle={{
                     color: "#7F1C06",
                     textDecoration: "none",
                   }}
                   partiallyActive={true}
+                  className={navStyle.mainNavLink}
                 >
                   {value}
                 </Link>

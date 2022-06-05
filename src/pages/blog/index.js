@@ -6,6 +6,7 @@ import Layout from "../../components/layout"
 import Seo from "../../components/seo"
 import AlgoliaSearchSite from "../../components/algoliaSearchSite"
 
+import * as indexStyle from "../index.module.css"
 import kebabCase from "lodash/kebabCase"
 
 const BlogIndex = ({ data, location }) => {
@@ -38,7 +39,7 @@ const BlogIndex = ({ data, location }) => {
           return (
             <li key={post.id} style={{ position: "relative" }}>
               <article
-                className="post-list-item"
+                className={`${indexStyle.postListItem}`}
                 itemScope
                 itemType="http://schema.org/Article"
               >

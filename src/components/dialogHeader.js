@@ -9,13 +9,15 @@ import * as React from "react"
 import Nav from "./nav"
 import { Link } from "gatsby"
 
+import * as dialogHeader from "./dialog-header.module.css"
+
 const DiaglogNav = () => {
   return (
-    <div className={"header-diaglog"}>
-      <Link className="header-link-home" to="/">
+    <div className={`${dialogHeader.dialog} dialog-header`}>
+      <Link className={dialogHeader.headerLinkHome} to="/">
         Home page
       </Link>
-      <Nav />
+      <Nav className="dialog-nav"/>
     </div>
   )
 }

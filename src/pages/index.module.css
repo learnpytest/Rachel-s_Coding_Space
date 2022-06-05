@@ -1,0 +1,30 @@
+.post-list-item {
+  margin-bottom: var(--spacing-8);
+  margin-top: var(--spacing-8);
+}
+
+.post-list-item p {
+  margin-bottom: var(--spacing-0);
+}
+
+.post-list-item h2 {
+  font-size: var(--fontSize-4);
+  color: var(--color-primary);
+  margin-bottom: var(--spacing-2);
+  margin-top: var(--spacing-0);
+}
+
+.post-list-item header {
+  margin-bottom: var(--spacing-4);
+}
+
+.post-list-item~.backdrop {
+  transition: background-color .5s;
+  border-radius: 8px;
+  z-index: 2;
+}
+
+.post-list-item~.backdrop:hover {
+  opacity: 0.7;
+  background-color: rgba(0, 0, 0, 0.08);
+}

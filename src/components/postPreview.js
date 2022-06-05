@@ -2,6 +2,7 @@ import * as React from "react"
 import { Link } from "gatsby"
 import { Highlight } from "react-instantsearch-hooks-web"
 
+import * as postPreview from "./post-preview.module.css"
 import kebabCase from "lodash/kebabCase"
 
 export function PostPreview ({ hit }) {
@@ -12,20 +13,20 @@ export function PostPreview ({ hit }) {
   return (
     <div style={{ position: "relative" }}>
       <article
-        className="post-list-item"
+        className={postPreview.postListItem}
         itemScope
         itemType="http://schema.org/Article"
       >
         <header>
-          <h2>
+          <h2 className={postPreview.title}>
             <span itemProp="headline">
                <Highlight hit={hit} attribute="title"/>
             </span>
           </h2>
         </header>
         <section>
-          <p>
-            <Highlight hit={hit} attribute="excerpt"/>
+          <p className={postPreview.text}>
+            <Highlight hit={hit} attribute="excerpt" className={postPreview.aisHighlight}/>
           </p>
         </section>
       </article>

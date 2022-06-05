@@ -1,0 +1,57 @@
+.blog-post header h1 {
+  margin: var(--spacing-0) var(--spacing-0) var(--spacing-4) var(--spacing-0);
+}
+
+.blog-post header p {
+  font-size: var(--fontSize-2);
+  font-family: var(--font-heading);
+}
+
+.blog-post [itemprop="articleBody"] ul, .blog-post [itemprop="articleBody"] ol {
+  padding: 0.5em 1em;
+}
+
+.blog-post [itemprop="articleBody"] li {
+  margin-left: 0.5em;
+}
+
+.blog-post [itemprop="articleBody"] strong, .blog-post [itemprop="articleBody"] a {
+  display: inline-block;
+}
+
+.blog-post details {
+  padding: 0.5rem 0.5rem 0;
+  border-radius: 8px;
+  margin-bottom: 2em;
+  color: #164641;
+  overflow: hidden;
+}
+
+.blog-post summary {
+  margin: -0.5rem -0.5rem 0;
+  padding: 0.5rem;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.blog-post summary:hover {
+  cursor: pointer;
+}
+
+.blog-post details[open] {
+  padding: 0.5em;
+}
+
+.blog-post-pointer-nav {
+  margin: var(--spacing-0);
+  display: flex;
+  justify-content: space-between;
+  list-style: none;
+  padding: 0;
+  gap: 3em;
+}
+
+.blog-pointer {
+  width: 1px;
+  flex-grow: 1;
+}

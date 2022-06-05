@@ -2,8 +2,9 @@ import * as React from "react"
 import { useState } from "react"
 import algoliasearch from "algoliasearch/lite"
 import { InstantSearch, SearchBox, Hits } from "react-instantsearch-hooks-web"
-
 import { PostPreview } from "./postPreview"
+
+import * as algoliaSearchSiteStyle from "./algolia-search-site.module.css"
 
 const searchClient = algoliasearch(
   "WRA8GPTB3I",
@@ -24,7 +25,7 @@ const AlgoliaSearchSite = () => {
       <InstantSearch searchClient={searchClient} indexName="blog">
         <SearchBox placeholder="搜尋全站文章..." onInput={handleSearchInput} onBlur={cancelSearch}/>
         { searchState && 
-           <Hits hitComponent={ PostPreview }/>
+           <Hits hitComponent={ PostPreview } className={`${algoliaSearchSiteStyle.aisHits}`}/>
 
         }
       </InstantSearch>

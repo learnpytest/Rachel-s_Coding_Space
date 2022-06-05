@@ -1,0 +1,30 @@
+ [data-is-root-path="true"] .main-nav-link {
+   font-size: var(--fontSize-1);
+ }
+
+ .main-nav-list {
+  list-style: none;
+ }
+
+.main-nav-item {
+   margin: 0;
+   display: inline-block;
+ }
+
+ .main-nav-item:not(:last-child):after {
+   content: "/";
+   display: inline-block;
+   margin-left: 0.5em;
+   margin-right: 0.5em;
+   font-size: var(--fontSize-0);
+ }
+
+ .main-nav-link {
+   display: inline-block;
+   font-size: 0.5rem;
+   padding: 0.5em 0 0.3em 0;
+ }
+
+ [data-activescrolling="true"] .main-nav-item:not(:last-child):after {
+   content: "";
+ }

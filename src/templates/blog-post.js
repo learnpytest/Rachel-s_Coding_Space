@@ -6,6 +6,7 @@ import Bio from "../components/bio"
 import Layout from "../components/layout"
 import Seo from "../components/seo"
 
+import * as blogPostStyle from "./blog-post.module.css"
 import kebabCase from "lodash/kebabCase"
 
 const BlogPostTemplate = ({ data, location, pageContext }) => {
@@ -28,7 +29,7 @@ const BlogPostTemplate = ({ data, location, pageContext }) => {
         description={post.frontmatter.description || post.excerpt}
       />
       <article
-        className="blog-post"
+        className={`${blogPostStyle.blogPost} blog-post`}
         itemScope
         itemType="http://schema.org/Article"
       >
@@ -47,24 +48,17 @@ const BlogPostTemplate = ({ data, location, pageContext }) => {
           <Bio />
         </footer>
       </article>
-      <nav className="blog-post-nav">
-        <ul
-          style={{
-            display: `flex`,
-            flexWrap: `wrap`,
-            justifyContent: `space-between`,
-            listStyle: `none`,
-            padding: 0,
-          }}
+      <nav>
+        <ul className={blogPostStyle.blogPostPointerNav}
         >
-          <li>
+          <li className={blogPostStyle.blogPointer}>
             {previous && (
               <Link to={previousPath} rel="prev">
                 ← {previous.frontmatter.title}
               </Link>
             )}
           </li>
-          <li>
+          <li className={blogPostStyle.blogPointer}>
             {next && (
               <Link to={nextPath} rel="next">
                 {next.frontmatter.title} →

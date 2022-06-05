@@ -5,10 +5,18 @@ import "typeface-merriweather"
 import "./src/normalize.css"
 // custom CSS styles
 import "./src/style.css"
-// custom Nav CSS styles
-import "./src/style/nav.css"
-import "./src/style/category.css"
-import "./src/style/post-preview.css"
+import "./src/style/remark-copy.css"
 
 // Highlighting for code blocks
 import "prismjs/themes/prism-okaidia.css"
+
+export const onClientEntry = () => {
+  window.getRemarkCopiedText = (text, element) => {
+    if(element.textContent === "Copied!") return
+    window.navigator.clipboard.writeText(text)
+    element.textContent = "Copied!"
+    setTimeout(() => {
+      element.textContent = "Copy"
+    }, 5000)
+  }
+}

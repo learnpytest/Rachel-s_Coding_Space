@@ -33,10 +33,12 @@ const queries = [
       return data.pages.nodes.reduce((indices, post) => {
         // 1 description (if it exists)
         // 2 each paragraph
-        const paragraphChunks = striptags(
-          post.html,
-          ["\n"]
-        ).split("\n").filter(paragraphChunk => !!paragraphChunk.trim() && paragraphChunk.trim() !== "\n")
+        const paragraphChunks = striptags(post.html, ["\n"])
+          .split("\n")
+          .filter(
+            paragraphChunk =>
+              !!paragraphChunk.trim() && paragraphChunk.trim() !== "\n"
+          )
 
         // const paragraphChunks = striptags(post.html, [], "XXX_SPLITER").split("XXX_SPLITER").filter(chnk => !!chnk.trim() && chnk.trim()!== '\n' && chnk.trim() !== '(' && chnk.trim() !== ')' && chnk.trim() !== ':' && chnk.trim() !== '{' && chnk.trim() !== '}' && chnk.trim() !== ',' && chnk.trim() !== '=>' && chnk.trim() !== ',')
 
@@ -85,12 +87,11 @@ module.exports = {
       portfolio: `Portfolio`,
       blog: `Blog`,
       categories: `Categories`,
+      rss: `RSS File`,
     },
   },
   plugins: [
-    `gatsby-plugin-image`,
-    `gatsby-plugin-sharp`,
-    `gatsby-transformer-sharp`,
+    `gatsby-plugin-preact`,
     {
       resolve: `gatsby-plugin-algolia`,
       options: {
@@ -118,6 +119,15 @@ module.exports = {
       },
     },
     {
+      resolve: `gatsby-source-notion-api`,
+      options: {
+        token: process.env.GATSBY_INTEGRATION_TOKEN,
+        databaseId: process.env.GATSBY_DATABASE_ID,
+        propsToFrontmatter: true,
+        lowerTitleLevel: true,
+      },
+    },
+    {
       resolve: `gatsby-transformer-remark`,
       options: {
         plugins: [
@@ -133,13 +143,16 @@ module.exports = {
               wrapperStyle: `margin-bottom: 1.0725rem`,
             },
           },
+          `remark-code-block`,
           `gatsby-remark-prismjs`,
           `gatsby-remark-copy-linked-files`,
           `gatsby-remark-smartypants`,
         ],
       },
     },
-
+    `gatsby-plugin-image`,
+    `gatsby-plugin-sharp`,
+    `gatsby-transformer-sharp`,
     // {
     //   resolve: `gatsby-plugin-google-analytics`,
     //   options: {
@@ -217,14 +230,14 @@ module.exports = {
     // this (optional) plugin enables Progressive Web App + Offline functionality
     // To learn more, visit: https://gatsby.dev/offline
     // `gatsby-plugin-offline`,
-    {
-      resolve: `gatsby-source-notion-api`,
-      options: {
-        token: process.env.GATSBY_INTEGRATION_TOKEN,
-        databaseId: process.env.GATSBY_DATABASE_ID,
-        propsToFrontmatter: true,
-        lowerTitleLevel: true,
-      },
-    },
+    // {
+    //   resolve: `gatsby-plugin-schema-snapshot`,
+    //   options: {
+    //     path: `schema.gql`,
+    //     update: process.env.GATSBY_UPDATE_SCHEMA_SNAPSHOT,
+    //   },
+    // },
+    `gatsby-plugin-webpack-bundle-analyser-v2`,
+    `gatsby-plugin-perf-budgets`,
   ],
 }

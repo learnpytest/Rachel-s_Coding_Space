@@ -3,7 +3,8 @@ import { useState, useEffect } from "react"
 import { Link } from "gatsby"
 
 import Nav from "./nav"
-import DiaglogNav from "./diaglogNav"
+import DialogHeader from "./dialogHeader"
+import * as layoutStyle from "./layout.module.css"
 
 const Layout = ({ location, title, children }) => {
   const rootPath = `${__PATH_PREFIX__}/`
@@ -34,19 +35,17 @@ const Layout = ({ location, title, children }) => {
 
   if (isRootPath) {
     header = (
-      <>
-        <h1 className="main-heading">
+      <div>
+        <h1 className={`${layoutStyle.mainHeading}`}>
           <Link to="/">{title}</Link>
         </h1>
-        <div className="main-nav">
-          <Nav />
-        </div>
-      </>
+        <Nav />
+      </div>
     )
   } else {
     header = (
-        <div className={"header-link-page"}>
-          <Link className="header-link-home" to="/">
+        <div>
+          <Link className={`${layoutStyle.headerLinkHome}`} to="/">
             {title}
           </Link>
           <Nav />
@@ -59,7 +58,7 @@ const Layout = ({ location, title, children }) => {
       className="global-wrapper"
       data-is-root-path={isRootPath} 
     >
-      <header className="global-header" data-activescrolling={state.scrolled}>{header}<DiaglogNav /></header>
+      <header className="global-header" data-activescrolling={state.scrolled}>{header}<DialogHeader /></header>
       <main>
         {children}</main>
       <footer>

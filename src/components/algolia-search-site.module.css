@@ -1,0 +1,17 @@
+/* algolia search assets */
+.ais-Hits {
+  position: absolute;
+  z-index: 3;
+  right: 20%;
+  left: 0;
+  background-color: var(--color-background-004675);
+  box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.5);
+}
+
+.ais-Hits * {
+  color: var(--color-accent-DDDDE9);
+}
+
+.ais-Hits ol {
+  list-style: none;
+}

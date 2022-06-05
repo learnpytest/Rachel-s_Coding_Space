@@ -5,6 +5,7 @@ import Layout from "../components/layout"
 import Seo from "../components/seo"
 import Bio from "../components/bio"
 
+import * as tagPostStyle from "./tag-post.module.css"
 import kebabCase from "lodash/kebabCase"
 
 const tagPage = ({ pageContext, data, location }) => {
@@ -20,7 +21,7 @@ const tagPage = ({ pageContext, data, location }) => {
     <Layout location={location} site={siteTitle}>
       <Seo />
       <Bio />
-      <div className="category">
+      <div className={`${tagPostStyle.category}`}>
         <header>
           <h2>
             {tagName} <small className="text">Category - </small>{" "}

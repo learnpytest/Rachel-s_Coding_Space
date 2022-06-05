@@ -78,10 +78,12 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
 
   function createPageByPostTemplate(_data, _pathPrefix) {
     if (!_data.length) return
-      _data.forEach((post, index) => {
+    _data.forEach((post, index) => {
       const previousPostId = index === 0 ? null : _data[index - 1].id
       const nextPostId = index === _data.length - 1 ? null : _data[index + 1].id
-      const path = _pathPrefix ? `/${_pathPrefix}/${_.kebabCase(post.fields?.slug)}` : _.kebabCase(post.fields?.slug)
+      const path = _pathPrefix
+        ? `/${_pathPrefix}/${_.kebabCase(post.fields?.slug)}`
+        : _.kebabCase(post.fields?.slug)
 
       createPage({
         path,
@@ -98,7 +100,6 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
 
   createPageByPostTemplate(posts, null)
   createPageByPostTemplate(notionPosts, "blog")
-
 
   // if (posts.length > 0) {
   //   posts.forEach((post, index) => {
@@ -207,18 +208,21 @@ exports.createSchemaCustomization = ({ actions }) => {
       portfolio: String
       blog: String
       categories: String
+      rss: String
     }
 
-    type MarkdownRemark implements Node{
+    type MarkdownRemark implements Node {
       frontmatter: Frontmatter
       fields: Fields
     }
 
     type Frontmatter {
       title: String
-      slug: String
-      description: String
       createdAt: Date @dateformat
+      year: String
+      month: String
+      description: String
+      slug: String
       source: String
       tags: String
     }

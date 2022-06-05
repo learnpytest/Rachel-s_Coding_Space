@@ -6,6 +6,8 @@ import Layout from "../components/layout"
 import Seo from "../components/seo"
 import AlgoliaSearchSite from "../components/algoliaSearchSite"
 
+import * as indexStyle from "./index.module.css"
+
 const PageIndex = ({ data, location }) => {
   const siteTitle = data.site.siteMetadata?.title || `Title`
   const posts = data.allMarkdownRemark.nodes
@@ -36,7 +38,7 @@ const PageIndex = ({ data, location }) => {
           return (
             <li key={post.fields.slug} style={{position: "relative"}}>
               <article
-                className="post-list-item"
+                className={`${indexStyle.postListItem}`}
                 itemScope
                 itemType="http://schema.org/Article"
               >
