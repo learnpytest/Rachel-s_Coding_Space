@@ -6,7 +6,10 @@ month: "05"
 description: "Some Tips for Markdown"
 source: file
 tags: General
+slug: /some-tips-for-markdown/
+embeddedImagesRemote: https://i.imgur.com/dXrC26m.png,https://i.imgur.com/dXrC26m.png
 ---
+import PictureBySharp from "../../../src/components/PictureBySharp.js"
 
 Markdown is a lightweight markup language to create formatted text and can be transferred to HTML or XHTML.
 
@@ -23,7 +26,12 @@ First, insert a great quote from this Wikipedia on
 > salted duck eggs have a briny aroma, a gelatin-like egg white and a
 > firm-textured, round yolk that is bright orange-red in color.
 
-![Chinese Salty Egg](./salty_egg.jpg)
+The embedded picture and description can be like below:
+\![Chinese Salty Egg]\(salty_egg.jpgy)
+
+<PictureBySharp name="salty_egg.jpg" />
+
+<PictureBySharp index={0} width={500} height={300} alt="Egg"/>
 
 You can also write code blocks here!
 

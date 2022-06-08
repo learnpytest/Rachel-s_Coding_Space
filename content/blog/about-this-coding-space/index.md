@@ -6,6 +6,8 @@ month: "05"
 description: This is a web space for displaying portfolio projects showcase and sharing articles about web app coding such as Javascript、Vue、React.
 source: file
 tags: General
+slug: /about-this-coding-space/
+embeddedImagesRemote: https://i.imgur.com/dXrC26m.png,https://i.imgur.com/dXrC26m.png,https://i.pinimg.com/564x/b0/49/a7/b049a76d1366c37d6db75a3d47dc3b1e.jpg
 ---
 
 ## Introduction

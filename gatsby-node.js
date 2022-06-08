@@ -1,5 +1,8 @@
 const path = require(`path`)
-const { createFilePath } = require(`gatsby-source-filesystem`)
+const {
+  createFilePath,
+  createRemoteFileNode,
+} = require(`gatsby-source-filesystem`)
 const _ = require("lodash")
 
 exports.createPages = async ({ graphql, actions, reporter }) => {
@@ -89,10 +92,11 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
         path,
         component: blogPost,
         context: {
-          id: post.id,
+          // id: post.id,
           previousPostId,
           nextPostId,
           timeToRead: post.timeToRead,
+          slug: post.frontmatter.slug,
         },
       })
     })
@@ -100,44 +104,6 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
 
   createPageByPostTemplate(posts, null)
   createPageByPostTemplate(notionPosts, "blog")
-
-  // if (posts.length > 0) {
-  //   posts.forEach((post, index) => {
-  //     const previousPostId = index === 0 ? null : posts[index - 1].id
-  //     const nextPostId = index === posts.length - 1 ? null : posts[index + 1].id
-  //     const path = _.kebabCase(post.fields?.slug)
-
-  //     createPage({
-  //       path,
-  //       component: blogPost,
-  //       context: {
-  //         id: post.id,
-  //         previousPostId,
-  //         nextPostId,
-  //         timeToRead: post.timeToRead,
-  //       },
-  //     })
-  //   })
-  // }
-
-  // if (notionPosts.length > 0) {
-  //   notionPosts.forEach((post, index) => {
-  //     const previousPostId = index === 0 ? null : notionPosts[index - 1].id
-  //     const nextPostId = index === notionPosts.length - 1 ? null : notionPosts[index + 1].id
-  //     const path = `/blog/${_.kebabCase(post.fields?.slug)}`
-
-  //     createPage({
-  //       path,
-  //       component: blogPost,
-  //       context: {
-  //         id: post.id,
-  //         previousPostId,
-  //         nextPostId,
-  //         timeToRead: post.timeToRead,
-  //       },
-  //     })
-  //   })
-  // }
 
   // Create pages that are already categorized by tags
   // But only if there's at least one tag found at tag group
@@ -161,20 +127,64 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
   }
 }
 
-exports.onCreateNode = ({ node, actions, getNode }) => {
-  const { createNodeField } = actions
+exports.onCreateNode = async ({
+  node,
+  actions,
+  getNode,
+  createNodeId,
+  cache,
+}) => {
+  const { createNodeField, createNode } = actions
+  let embeddedImagesRemote
+  let remoteImageArray = []
   let value
-  if (node.internal.type === `MarkdownRemark`) {
-    if (node.frontmatter?.source === `file`) {
+
+  if (node.internal.type === `MarkdownRemark` && node.frontmatter) {
+    if (node.frontmatter.source === `file`) {
       value = createFilePath({ node, getNode }) || ""
     } else {
-      value = node.frontmatter?.slug
+      value = node.frontmatter.slug
     }
+    if (node.frontmatter.embeddedImagesRemote) {
+      console.log("nodeembeddedImagesRemote", node.frontmatter.embeddedImagesRemote)
+      remoteImageArray = [...node.frontmatter.embeddedImagesRemote.split(",")]
+      console.log("noderemoteImageArray", remoteImageArray)
+    }
+
     createNodeField({
       name: `slug`,
       node,
       value,
     })
+
+    embeddedImagesRemote = await Promise.all(
+      remoteImageArray.map(url => {
+        try {
+          return createRemoteFileNode({
+            url,
+            parentNodeId: node.id,
+            createNode,
+            createNodeId,
+            cache,
+          })
+        } catch (error) {
+          console.error(error)
+        }
+      })
+    )
+
+    if (embeddedImagesRemote) {
+      node.remoteFileNodeId = embeddedImagesRemote.map(
+        image => image.children[0]
+      )
+      createNodeField({
+        node,
+        name: "embeddedImagesRemote",
+        value: embeddedImagesRemote.map(image => {
+          return image.children[0]
+        }),
+      })
+    }
   }
 }
 
@@ -213,10 +223,10 @@ exports.createSchemaCustomization = ({ actions }) => {
 
     type MarkdownRemark implements Node {
       frontmatter: Frontmatter
-      fields: Fields
+      remoteFileNodeId: [String]
     }
 
-    type Frontmatter {
+    type Frontmatter @dontInfer {
       title: String
       createdAt: Date @dateformat
       year: String
@@ -225,6 +235,7 @@ exports.createSchemaCustomization = ({ actions }) => {
       slug: String
       source: String
       tags: String
+      embeddedImagesRemote: String
     }
 
     type Fields {
