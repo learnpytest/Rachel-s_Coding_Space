@@ -11,7 +11,7 @@ import kebabCase from "lodash/kebabCase"
 
 const BlogIndex = ({ data, location }) => {
   const siteTitle = data.site.siteMetadata?.title || `Title`
-  const posts = data.allMarkdownRemark.nodes
+  const posts = data.allMdx.nodes
 
   if (posts.length === 0) {
     return (
@@ -34,10 +34,10 @@ const BlogIndex = ({ data, location }) => {
       <AlgoliaSearchSite />
       <ol style={{ listStyle: `none` }}>
         {posts.map(post => {
-          const title = post.frontmatter.title || "NoTitle"
-
+          const { id } = post
+          const { title, date, description, slug } = post.frontmatter
           return (
-            <li key={post.id} style={{ position: "relative" }}>
+            <li key={id} style={{ position: "relative" }}>
               <article
                 className={`${indexStyle.postListItem}`}
                 itemScope
@@ -47,20 +47,20 @@ const BlogIndex = ({ data, location }) => {
                   <h2>
                       <span itemProp="headline">{title}</span>
                   </h2>
-                  <small>{post.frontmatter.date}</small>
+                  <small>{date}</small>
                 </header>
                 <section>
                   <p
                     dangerouslySetInnerHTML={{
-                      __html: post.frontmatter.description || post.excerpt,
+                      __html: description,
                     }}
                     itemProp="description"
                   />
                 </section>
               </article>
-         
+
               <Link
-                to={`/blog/${kebabCase(post.fields?.slug)}`}
+                to={`/blog/${kebabCase(slug)}`}
                 itemProp="url"
                 style={{
                   position: "absolute",
@@ -88,20 +88,17 @@ export const blogQuery = graphql`
         title
       }
     }
-    allMarkdownRemark(
+    allMdx(
       sort: { fields: [frontmatter___createdAt], order: DESC }
       filter: { frontmatter: { source: { in: "notion" } } }
     ) {
       nodes {
         id
-        excerpt
-        fields {
-          slug
-        }
         frontmatter {
           date: createdAt(formatString: "MMMM DD, YYYY")
           title
           description
+          slug
         }
       }
     }

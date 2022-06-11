@@ -8,7 +8,7 @@ import kebabCase from "lodash/kebabCase"
 
 const TagsIndex = ({ data, location }) => {
   const siteTitle = data.site.siteMetadata?.title || `Title`
-  const tags = data.allMarkdownRemark.group
+  const tags = data.allMdx.group
   let newTagsGroup = []
   let tagCount = {}
 let count = 0
@@ -74,7 +74,7 @@ export const blogQuery = graphql`
         title
       }
     }
-    allMarkdownRemark(limit: 2000) {
+    allMdx(limit: 2000) {
       group(field: frontmatter___tags) {
         fieldValue
         totalCount

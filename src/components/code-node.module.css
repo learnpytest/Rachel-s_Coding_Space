@@ -1,0 +1,57 @@
+.code-node * {
+  font-family: monospace;
+}
+.code-node {
+  position: relative;
+}
+
+.code-header {
+  display: flex;
+  margin-bottom: 1em;
+  font-weight: 700;
+}
+
+.code-header .text {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--color-accent-1F1F1F)
+}
+
+.code-header .language {
+  padding: 0.5em 1em;
+  margin: 0 1em;
+  background-color: var(--color-tag-ADADFF);
+  border-radius: 0 0 14px 14px;
+}
+
+.code-header .file {
+  color: var(--color-accent);
+  font-style: italic;
+}
+
+.code-header .button-group {
+  position: absolute;
+  right: 0.5em;
+  top: 0.5em;
+}
+
+.code-header .button-group .btn {
+  padding: 0.5em 1em;
+  border-radius: 8px;
+  border: none;
+  outline: none;
+  background-color: var(--color-button-FFBD38);
+  color: var(--color-accent-1F1F1F);
+  box-shadow: 3px 3px 5px rgba(255, 255, 255, 0.3);
+  transition: 0.3s;
+}
+
+.code-header .button-group .btn:hover {
+  opacity: 0.8;
+  cursor: pointer;
+}
+
+.code-body .code-line {
+  white-space: pre-wrap;
+}

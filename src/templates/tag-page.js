@@ -69,7 +69,7 @@ export const tagQuery = graphql`
         title
       }
     }
-    allMarkdownRemark(
+    allMdx(
       limit: 2000
       sort: { fields: [frontmatter___createdAt], order: DESC }
       filter: { frontmatter: { tags: { regex: $tag } } }
@@ -78,9 +78,6 @@ export const tagQuery = graphql`
       group(field: frontmatter___year) {
         fieldValue
         nodes {
-          fields {
-            slug
-          }
           frontmatter {
             title
             createdAt(formatString: "MM-DD")

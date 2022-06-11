@@ -1,13 +1,13 @@
 import * as React from "react"
 import { Link, graphql } from "gatsby"
 import { DiscussionEmbed } from "disqus-react"
-import { MDXRenderer } from 'gatsby-plugin-mdx';
-import { MDXProvider } from '@mdx-js/react';
+import { MDXRenderer } from "gatsby-plugin-mdx"
+import { MDXProvider } from "@mdx-js/react"
 
 import Bio from "../components/bio"
 import Layout from "../components/layout"
 import Seo from "../components/seo"
-import PictureBySharp from "../components/PictureBySharp";
+import PictureBySharp from "../components/PictureBySharp"
 import * as blogPostStyle from "./blog-post.module.css"
 import kebabCase from "lodash/kebabCase"
 
@@ -32,20 +32,20 @@ const BlogPostTemplate = ({ data, location, pageContext }) => {
     }
   }, [state.scrolled])
 
-  const post = data.markdownRemark
-  const remoteFileNodeId = post?.remoteFileNodeId
-  const postMdx = data.mdx
+  const post = data.mdx
+  const remoteFileNodeId = post?.fields?.remoteFileNodeId
+  // const postMdx = data.mdx
 
   const siteTitle = data.site.siteMetadata?.title || `Title`
   const { previous, next } = data
   const previousPath =
     previous?.frontmatter.source === `notion`
-      ? `/blog/${kebabCase(previous?.fields.slug)}`
-      : `/${kebabCase(previous?.fields.slug)}`
+      ? `/blog/${kebabCase(previous?.frontmatter.slug)}`
+      : `/${kebabCase(previous?.frontmatter.slug)}`
   const nextPath =
     next?.frontmatter.source === `notion`
-      ? `/blog/${kebabCase(next?.fields.slug)}`
-      : `/${kebabCase(next?.fields.slug)}`
+      ? `/blog/${kebabCase(next?.frontmatter.slug)}`
+      : `/${kebabCase(next?.frontmatter.slug)}`
   const { timeToRead } = pageContext
 
   const disqusConfig = {
@@ -77,17 +77,11 @@ const BlogPostTemplate = ({ data, location, pageContext }) => {
               {post.frontmatter.createdAt} - {timeToRead} mins to read
             </p>
           </header>
-
           <section itemProp="articleBody">
-          <MDXProvider components={components}>
-            <MDXRenderer>{postMdx.body}</MDXRenderer>
-          </MDXProvider>
-
+            <MDXProvider components={components}>
+              <MDXRenderer>{post.body}</MDXRenderer>
+            </MDXProvider>
           </section>
-          {/* <section
-          // dangerouslySetInnerHTML={{ __html: post.html }}
-          itemProp="articleBody"
-        /> */}
           <hr />
           <footer>
             <Bio />
@@ -111,8 +105,7 @@ const BlogPostTemplate = ({ data, location, pageContext }) => {
             </li>
           </ul>
         </nav>
-        {state.scrolled &&   <DiscussionEmbed {...disqusConfig} />}
-      
+        {state.scrolled && <DiscussionEmbed {...disqusConfig} />}
       </Layout>
     </>
   )
@@ -131,36 +124,32 @@ export const pageQuery = graphql`
         title
       }
     }
+
     mdx(frontmatter: { slug: { eq: $slug } }) {
-      body
-    }
-    markdownRemark(frontmatter: { slug: { eq: $slug } }) {
       id
-      remoteFileNodeId
-      excerpt(pruneLength: 160)
       frontmatter {
         title
         createdAt(formatString: "MMMM DD, YYYY")
         description
         slug
       }
-    }
-    previous: markdownRemark(id: { eq: $previousPostId }) {
       fields {
-        slug
+        remoteFileNodeId
       }
+      body
+    }
+    previous: mdx(id: { eq: $previousPostId }) {
       frontmatter {
         title
         source
-      }
-    }
-    next: markdownRemark(id: { eq: $nextPostId }) {
-      fields {
         slug
       }
+    }
+    next: mdx(id: { eq: $nextPostId }) {
       frontmatter {
         title
         source
+        slug
       }
     }
   }

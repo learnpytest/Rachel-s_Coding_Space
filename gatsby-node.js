@@ -6,46 +6,25 @@ const {
 const _ = require("lodash")
 
 exports.createPages = async ({ graphql, actions, reporter }) => {
-  const { createPage } = actions
+    const { createPage } = actions
 
-  // Define a template for blog post
+  //   // Define a template for blog post
   const blogPost = path.resolve(`./src/templates/blog-post.js`)
 
-  // Define a template for tag that has posts tagged with this
-  const taggedPostsPage = path.resolve(`./src/templates/tag-page.js`)
+  //   // Define a template for tag that has posts tagged with this
+  //   const taggedPostsPage = path.resolve(`./src/templates/tag-page.js`)
 
-  // Get all markdown blog posts sorted by date
+  //   // Get all markdown blog posts sorted by date
   const result = await graphql(
     `
       {
-        markdownPosts: allMarkdownRemark(
-          sort: { fields: [frontmatter___createdAt], order: DESC }
-          filter: { frontmatter: { source: { nin: "notion" } } }
-          limit: 1000
-        ) {
-          nodes {
-            id
-            fields {
-              slug
-            }
-            timeToRead
-            frontmatter {
-              title
-              slug
-              source
-            }
-          }
-        }
-        notionPosts: allMarkdownRemark(
+        postsFromNotion: allMdx(
           sort: { fields: [frontmatter___createdAt], order: DESC }
           filter: { frontmatter: { source: { in: "notion" } } }
           limit: 1000
         ) {
           nodes {
             id
-            fields {
-              slug
-            }
             timeToRead
             frontmatter {
               title
@@ -54,7 +33,22 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
             }
           }
         }
-        tagsGroup: allMarkdownRemark(limit: 2000) {
+        postsNotFromNotion: allMdx(
+          sort: { fields: [frontmatter___createdAt], order: DESC }
+          filter: { frontmatter: { source: { nin: "notion" } } }
+          limit: 1000
+        ) {
+          nodes {
+            id
+            timeToRead
+            frontmatter {
+              title
+              slug
+              source
+            }
+          }
+        }
+        tagsGroup: allMdx(limit: 2000) {
           group(field: frontmatter___tags) {
             fieldValue
           }
@@ -71,60 +65,57 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
     return
   }
 
-  const posts = result.data.markdownPosts.nodes
-  const notionPosts = result.data.notionPosts.nodes
-  const tagsGroup = result.data.tagsGroup.group
+    const postsNotFromNotion = result.data.postsNotFromNotion.nodes
+    const postsFromNotion = result.data.postsFromNotion.nodes
+    const tagsGroup = result.data.tagsGroup.group
 
-  // Create blog posts pages
-  // But only if there's at least one markdown file found at "content/blog" (defined in gatsby-config.js)
-  // `context` is available in the template as a prop and as a variable in GraphQL
+  //   // Create blog posts pages
+  //   // But only if there's at least one markdown file found at "content/blog" (defined in gatsby-config.js)
+  //   // `context` is available in the template as a prop and as a variable in GraphQL
 
-  function createPageByPostTemplate(_data, _pathPrefix) {
-    if (!_data.length) return
-    _data.forEach((post, index) => {
-      const previousPostId = index === 0 ? null : _data[index - 1].id
-      const nextPostId = index === _data.length - 1 ? null : _data[index + 1].id
-      const path = _pathPrefix
-        ? `/${_pathPrefix}/${_.kebabCase(post.fields?.slug)}`
-        : _.kebabCase(post.fields?.slug)
+    function takeTemplateToCreatePage(_data, _pathPrefix) {
+      if (!_data.length) return
+      _data.forEach((post, index) => {
+        const previousPostId = index === 0 ? null : _data[index - 1].id
+        const nextPostId = index === _data.length - 1 ? null : _data[index + 1].id
+        const path = `${_pathPrefix}/${_.kebabCase(post.frontmatter?.slug)}`
 
-      createPage({
-        path,
-        component: blogPost,
-        context: {
-          // id: post.id,
-          previousPostId,
-          nextPostId,
-          timeToRead: post.timeToRead,
-          slug: post.frontmatter.slug,
-        },
+        createPage({
+          path,
+          component: blogPost,
+          context: {
+            previousPostId,
+            nextPostId,
+            slug: post.frontmatter?.slug,
+            timeToRead: post.timeToRead
+          },
+        })
       })
-    })
-  }
+    }
 
-  createPageByPostTemplate(posts, null)
-  createPageByPostTemplate(notionPosts, "blog")
+    takeTemplateToCreatePage(postsNotFromNotion, "")
+    takeTemplateToCreatePage(postsFromNotion, "/blog")
 
-  // Create pages that are already categorized by tags
-  // But only if there's at least one tag found at tag group
-  // `context` is available in the template as a prop and as a variable in GraphQL
-  if (tagsGroup.length > 0) {
-    let newTagsGroup = []
-    tagsGroup.forEach(tags => {
-      const tagsArray = tags.fieldValue.split(",")
-      newTagsGroup = [...new Set([...tagsArray, ...newTagsGroup])]
-    })
+  //   // Create pages that are already categorized by tags
+  //   // But only if there's at least one tag found at tag group
+  //   // `context` is available in the template as a prop and as a variable in GraphQL
+  //   if (tagsGroup.length > 0) {
+  //     let newTagsGroup = []
+  //     tagsGroup.forEach(tags => {
+  //       const tagsArray = tags.fieldValue.split(",")
+  //       newTagsGroup = [...new Set([...tagsArray, ...newTagsGroup])]
+  //     })
 
-    newTagsGroup.forEach(tag => {
-      createPage({
-        path: `/categories/${_.kebabCase(tag)}/`,
-        component: taggedPostsPage,
-        context: {
-          tag: `/${tag}/`,
-        },
-      })
-    })
-  }
+  //     newTagsGroup.forEach(tag => {
+  //       createPage({
+  //         path: `/categories/${_.kebabCase(tag)}/`,
+  //         component: taggedPostsPage,
+  //         context: {
+  //           tag: `/${tag}/`,
+  //         },
+  //       })
+  //     })
+  //   }
 }
 
 exports.onCreateNode = async ({
@@ -139,51 +130,39 @@ exports.onCreateNode = async ({
   let remoteImageArray = []
   let value
 
-  if (node.internal.type === `MarkdownRemark` && node.frontmatter) {
+  if (node.internal.type === `Mdx` && node.frontmatter) {
     if (node.frontmatter.source === `file`) {
       value = createFilePath({ node, getNode }) || ""
     } else {
       value = node.frontmatter.slug
     }
     if (node.frontmatter.embeddedImagesRemote) {
-      console.log("nodeembeddedImagesRemote", node.frontmatter.embeddedImagesRemote)
       remoteImageArray = [...node.frontmatter.embeddedImagesRemote.split(",")]
-      console.log("noderemoteImageArray", remoteImageArray)
-    }
 
-    createNodeField({
-      name: `slug`,
-      node,
-      value,
-    })
-
-    embeddedImagesRemote = await Promise.all(
-      remoteImageArray.map(url => {
-        try {
-          return createRemoteFileNode({
-            url,
-            parentNodeId: node.id,
-            createNode,
-            createNodeId,
-            cache,
+      if (remoteImageArray.length) {
+        embeddedImagesRemote = await Promise.all(
+          remoteImageArray.map(url => {
+            try {
+              return createRemoteFileNode({
+                url,
+                parentNodeId: node.id,
+                createNode,
+                createNodeId,
+                cache,
+              })
+            } catch (error) {
+              console.error(error)
+            }
           })
-        } catch (error) {
-          console.error(error)
+        )
+        if (embeddedImagesRemote) {
+          await createNodeField({
+            name: `remoteFileNodeId`,
+            node,
+            value: embeddedImagesRemote.map(image => image.children[0]),
+          })
         }
-      })
-    )
-
-    if (embeddedImagesRemote) {
-      node.remoteFileNodeId = embeddedImagesRemote.map(
-        image => image.children[0]
-      )
-      createNodeField({
-        node,
-        name: "embeddedImagesRemote",
-        value: embeddedImagesRemote.map(image => {
-          return image.children[0]
-        }),
-      })
+      }
     }
   }
 }
@@ -198,32 +177,27 @@ exports.createSchemaCustomization = ({ actions }) => {
   // This way the "MarkdownRemark" queries will return `null` even when no
   // blog posts are stored inside "content/blog" instead of returning an error
   createTypes(`
-    type SiteSiteMetadata {
+    type SiteSiteMetadata @dontInfer {
       author: Author
       siteUrl: String
       social: Social
       nav: Nav
     }
 
-    type Author {
+    type Author @dontInfer {
       name: String
       summary: String
     }
 
-    type Social {
+    type Social @dontInfer {
       twitter: String
     }
 
-    type Nav {
+    type Nav @dontInfer {
       portfolio: String
       blog: String
       categories: String
       rss: String
-    }
-
-    type MarkdownRemark implements Node {
-      frontmatter: Frontmatter
-      remoteFileNodeId: [String]
     }
 
     type Frontmatter @dontInfer {
@@ -238,8 +212,8 @@ exports.createSchemaCustomization = ({ actions }) => {
       embeddedImagesRemote: String
     }
 
-    type Fields {
-      slug: String
+    type Fields @dontInfer {
+      remoteFileNodeId: [String]
     }
   `)
 }

@@ -49,17 +49,21 @@ const saltyDuckEgg = "chinese preserved food product"
 
 This is a paragraph.
 
+```markdown
     This is a paragraph.
+```
 
 # Header 1
 
 ## Header 2
 
+```markdown file=test.md hightlights=1,4
     Header 1
     ========
 
     Header 2
     --------
+```
 
 # Header 1
 

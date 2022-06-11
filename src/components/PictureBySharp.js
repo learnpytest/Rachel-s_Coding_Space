@@ -6,15 +6,16 @@ export default function PictureBySharp({ remoteFileNodeId, index, name, width, h
   let imgIndex
   let remoteFileId = ""
   const imgSharpSource = useStaticQuery(graphql`
-    query sharpQuery {
-      allImageSharp {
-        nodes {
-          id
-          gatsbyImageData(placeholder: BLURRED, formats: AUTO)
-        }
+  query sharpQuery {
+    allImageSharp {
+      nodes {
+        id
+        gatsbyImageData(placeholder: BLURRED, formats: AUTO)
       }
     }
+  }
   `)
+  console.log("index", remoteFileNodeId)
   const { nodes } = imgSharpSource?.allImageSharp
 
   if (name) {
