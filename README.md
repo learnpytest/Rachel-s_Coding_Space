@@ -14,7 +14,7 @@ Check more Gatsby Starters [official and community-created starters](https://www
     Use the Gatsby CLI ([install instructions](https://www.gatsbyjs.com/docs/tutorial/part-0/#gatsby-cli))
 
  **Download project.**
-
+ 
    ```shell
    git clone https://github.com/learnpytest/Rachel-s_Coding_Space.git
    cd {project_name}
