@@ -44,23 +44,22 @@ const Layout = ({ location, title, children }) => {
     )
   } else {
     header = (
-        <div>
-          <Link className={`${layoutStyle.headerLinkHome}`} to="/">
-            {title}
-          </Link>
-          <Nav />
-        </div>
+      <div>
+        <Link className={`${layoutStyle.headerLinkHome}`} to="/">
+          {title}
+        </Link>
+        <Nav />
+      </div>
     )
   }
 
   return (
-    <div
-      className="global-wrapper"
-      data-is-root-path={isRootPath} 
-    >
-      <header className="global-header" data-activescrolling={state.scrolled}>{header}<DialogHeader /></header>
-      <main>
-        {children}</main>
+    <div className="global-wrapper" data-is-root-path={isRootPath}>
+      <header className="global-header" data-activescrolling={state.scrolled}>
+        {header}
+        <DialogHeader />
+      </header>
+      <main>{children}</main>
       <footer>
         © {new Date().getFullYear()}, Built with
         {` `}

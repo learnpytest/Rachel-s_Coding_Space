@@ -9,15 +9,13 @@ const blogAlgoliaQuery = `
     pages: allMarkdownRemark(limit: 1000) {
       nodes {
         id
-        fields {
-          slug
-        }
         excerpt
         frontmatter {
           title
           date: createdAt(formatString: "MMMM DD, YYYY")
           description
           source
+          slug
         }
         html
       }
@@ -44,7 +42,7 @@ const queries = [
 
         const chunks = paragraphChunks.map((chnk, index) => ({
           id: post.id + index,
-          slug: post.fields.slug,
+          slug: post.frontmatter.slug,
           date: post.frontmatter.date,
           title: post.frontmatter.title,
           source: post.frontmatter.source,
@@ -54,11 +52,11 @@ const queries = [
         if (post.frontmatter.description) {
           chunks.push({
             id: post.id + new Date().getTime(),
-            slug: post.fields.slug,
+            slug: post.frontmatter.slug,
             date: post.frontmatter.date,
             title: post.frontmatter.title,
             source: post.frontmatter.source,
-            excerpt: post.frontmatter.excerpt,
+            excerpt: post.excerpt,
           })
         }
 
@@ -162,6 +160,7 @@ module.exports = {
           quality: 70,
           formats: ["auto", "webp", "avif"],
           placeholder: "blurred",
+          breakpoints: [750, 1080, 1366, 1920],
         },
       },
     },
@@ -219,8 +218,8 @@ module.exports = {
                 return Object.assign({}, node.frontmatter, {
                   description: node.excerpt,
                   date: node.frontmatter.createdAt,
-                  url: site.siteMetadata.siteUrl + node.fields.slug,
-                  guid: site.siteMetadata.siteUrl + node.fields.slug,
+                  url: site.siteMetadata.siteUrl + node.frontmatter.slug,
+                  guid: site.siteMetadata.siteUrl + node.frontmatter.slug,
                   custom_elements: [{ "content:encoded": node.html }],
                 })
               })
@@ -233,12 +232,10 @@ module.exports = {
                   nodes {
                     excerpt
                     html
-                    fields {
-                      slug
-                    }
                     frontmatter {
                       title
                       createdAt
+                      slug
                     }
                   }
                 }

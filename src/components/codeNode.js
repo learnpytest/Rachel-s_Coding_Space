@@ -5,15 +5,15 @@ import rangeParser from "parse-numeric-range"
 import * as codeNodeStyle from "./code-node.module.css"
 
 const CodeNode = props => {
-const [copyState, setCopyState] = useState("Copy")
+  const [copyState, setCopyState] = useState("Copy")
 
   const className = props.children.props.className || ""
   const code = props.children.props.children.trim()
   const language = className.replace(/language-/, "")
   const file = props.children.props.file
-  const rawTohightlight = props.children.props.hightlights || ""
-  const getRowsTohightlight = rawTohightlight => {
-    const rowNumbers = rangeParser(rawTohightlight)
+  const rawToHighlights = props.children.props.highlights || ""
+  const getRowsTohightlight = rawToHighlights => {
+    const rowNumbers = rangeParser(rawToHighlights)
     if (rowNumbers) {
       return index => rowNumbers.includes(index + 1)
     } else {
@@ -21,9 +21,9 @@ const [copyState, setCopyState] = useState("Copy")
     }
   }
 
-  const hightlightRows = getRowsTohightlight(rawTohightlight)
+  const hightlightRows = getRowsTohightlight(rawToHighlights)
 
- const getCopiedText = ({target}) => {
+  const getCopiedText = ({ target }) => {
     if (target.value === "Copied!") return
     window.navigator.clipboard.writeText(code)
     setCopyState("Copied!")
@@ -42,7 +42,9 @@ const [copyState, setCopyState] = useState("Copy")
             <pre className={className} style={style}>
               <header className={codeNodeStyle.codeHeader}>
                 <div className={codeNodeStyle.text}>
-                  <div className={codeNodeStyle.language}>{language || "unknown language"}</div>
+                  <div className={codeNodeStyle.language}>
+                    {language || "unknown language"}
+                  </div>
                   {
                     <div className={codeNodeStyle.file}>
                       {file && `${file}`}
@@ -50,7 +52,9 @@ const [copyState, setCopyState] = useState("Copy")
                   }
                 </div>
                 <div className={codeNodeStyle.buttonGroup}>
-                  <button className={codeNodeStyle.btn} onClick={getCopiedText}>{copyState}</button>
+                  <button className={codeNodeStyle.btn} onClick={getCopiedText}>
+                    {copyState}
+                  </button>
                 </div>
               </header>
               <div className={codeNodeStyle.codeBody}>
@@ -61,7 +65,9 @@ const [copyState, setCopyState] = useState("Copy")
                       style={{
                         background: hightlightRows(i)
                           ? "#FFD68A"
-                          : "transparent", opacity: "0.9", color: hightlightRows(i) && "#2A2734"
+                          : "transparent",
+                        opacity: "0.9",
+                        color: hightlightRows(i) && "#2A2734",
                       }}
                       className={codeNodeStyle.codeLine}
                     >

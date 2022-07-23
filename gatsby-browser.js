@@ -10,7 +10,7 @@ import "./src/style.css"
 // Highlighting for code blocks
 // import "prismjs/themes/prism-okaidia.css"
 
-import { wrapRootElement as wrapRoot } from "./src/components/wrap-root-element"
+// import { wrapRootElement as wrapRoot } from "./src/components/wrap-root-element"
 
 // export const onClientEntry = () => {
 //   window.getRemarkCopiedText = (text, element) => {
@@ -23,4 +23,4 @@ import { wrapRootElement as wrapRoot } from "./src/components/wrap-root-element"
 //   }
 // }
 
-export const wrapRootElement = wrapRoot
+// export const wrapRootElement = wrapRoot

@@ -15,20 +15,20 @@ export default function PictureBySharp({ remoteFileNodeId, index, name, width, h
     }
   }
   `)
-  console.log("index", remoteFileNodeId)
+
   const { nodes } = imgSharpSource?.allImageSharp
 
   if (name) {
     imgIndex = nodes.findIndex(node =>
       node.gatsbyImageData.images.fallback.src.endsWith(name)
     )
-  } else if(remoteFileNodeId) {
+  } else if (remoteFileNodeId) {
     remoteFileId = remoteFileNodeId.length ? remoteFileNodeId[index] : null
     if (remoteFileId) {
       imgIndex = nodes.findIndex(node => node.id === remoteFileId)
     }
   }
-
+  
   if (getImage(nodes[imgIndex])) {
     return (
       <div>

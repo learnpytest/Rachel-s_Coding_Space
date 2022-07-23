@@ -6,13 +6,13 @@ const {
 const _ = require("lodash")
 
 exports.createPages = async ({ graphql, actions, reporter }) => {
-    const { createPage } = actions
+  const { createPage } = actions
 
   //   // Define a template for blog post
   const blogPost = path.resolve(`./src/templates/blog-post.js`)
 
   //   // Define a template for tag that has posts tagged with this
-  //   const taggedPostsPage = path.resolve(`./src/templates/tag-page.js`)
+  const taggedPostsPage = path.resolve(`./src/templates/tag-page.js`)
 
   //   // Get all markdown blog posts sorted by date
   const result = await graphql(
@@ -65,57 +65,57 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
     return
   }
 
-    const postsNotFromNotion = result.data.postsNotFromNotion.nodes
-    const postsFromNotion = result.data.postsFromNotion.nodes
-    const tagsGroup = result.data.tagsGroup.group
+  const postsNotFromNotion = result.data.postsNotFromNotion.nodes
+  const postsFromNotion = result.data.postsFromNotion.nodes
+  const tagsGroup = result.data.tagsGroup.group
 
   //   // Create blog posts pages
   //   // But only if there's at least one markdown file found at "content/blog" (defined in gatsby-config.js)
   //   // `context` is available in the template as a prop and as a variable in GraphQL
 
-    function takeTemplateToCreatePage(_data, _pathPrefix) {
-      if (!_data.length) return
-      _data.forEach((post, index) => {
-        const previousPostId = index === 0 ? null : _data[index - 1].id
-        const nextPostId = index === _data.length - 1 ? null : _data[index + 1].id
-        const path = `${_pathPrefix}/${_.kebabCase(post.frontmatter?.slug)}`
+  function takeTemplateToCreatePage(_data, _pathPrefix) {
+    if (!_data.length) return
+    _data.forEach((post, index) => {
+      const previousPostId = index === 0 ? null : _data[index - 1].id
+      const nextPostId = index === _data.length - 1 ? null : _data[index + 1].id
+      const path = `${_pathPrefix}/${_.kebabCase(post.frontmatter?.slug)}`
 
-        createPage({
-          path,
-          component: blogPost,
-          context: {
-            previousPostId,
-            nextPostId,
-            slug: post.frontmatter?.slug,
-            timeToRead: post.timeToRead
-          },
-        })
+      createPage({
+        path,
+        component: blogPost,
+        context: {
+          previousPostId,
+          nextPostId,
+          slug: post.frontmatter?.slug,
+          timeToRead: post.timeToRead,
+        },
       })
-    }
+    })
+  }
 
-    takeTemplateToCreatePage(postsNotFromNotion, "")
-    takeTemplateToCreatePage(postsFromNotion, "/blog")
+  takeTemplateToCreatePage(postsNotFromNotion, "")
+  takeTemplateToCreatePage(postsFromNotion, "/blog")
 
   //   // Create pages that are already categorized by tags
   //   // But only if there's at least one tag found at tag group
   //   // `context` is available in the template as a prop and as a variable in GraphQL
-  //   if (tagsGroup.length > 0) {
-  //     let newTagsGroup = []
-  //     tagsGroup.forEach(tags => {
-  //       const tagsArray = tags.fieldValue.split(",")
-  //       newTagsGroup = [...new Set([...tagsArray, ...newTagsGroup])]
-  //     })
+  if (tagsGroup.length > 0) {
+    let newTagsGroup = []
+    tagsGroup.forEach(tags => {
+      const tagsArray = tags.fieldValue.split(",")
+      newTagsGroup = [...new Set([...tagsArray, ...newTagsGroup])]
+    })
 
-  //     newTagsGroup.forEach(tag => {
-  //       createPage({
-  //         path: `/categories/${_.kebabCase(tag)}/`,
-  //         component: taggedPostsPage,
-  //         context: {
-  //           tag: `/${tag}/`,
-  //         },
-  //       })
-  //     })
-  //   }
+    newTagsGroup.forEach(tag => {
+      createPage({
+        path: `/categories/${_.kebabCase(tag)}/`,
+        component: taggedPostsPage,
+        context: {
+          tag: `/${tag}/`,
+        },
+      })
+    })
+  }
 }
 
 exports.onCreateNode = async ({
@@ -155,13 +155,12 @@ exports.onCreateNode = async ({
             }
           })
         )
-        if (embeddedImagesRemote) {
-          await createNodeField({
-            name: `remoteFileNodeId`,
-            node,
-            value: embeddedImagesRemote.map(image => image.children[0]),
-          })
-        }
+        console.log("remoteImageArray", remoteImageArray)
+        await createNodeField({
+          name: `remoteFileNodeId`,
+          node,
+          value: embeddedImagesRemote ? embeddedImagesRemote.map(image => image.children[0]) : [],
+        })
       }
     }
   }

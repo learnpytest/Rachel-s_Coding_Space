@@ -12,7 +12,7 @@ const tagPage = ({ pageContext, data, location }) => {
   const siteTitle = data.site.siteMetadata.title
   const { tag } = pageContext
   const tagName = tag.replace(/\//g, "")
-  const { group, totalCount } = data.allMarkdownRemark
+  const { group, totalCount } = data.allMdx
   const tagText = `${totalCount} articles ${
     totalCount === 1 ? "is" : "s are"
   } associated with this category.`
@@ -37,9 +37,8 @@ const tagPage = ({ pageContext, data, location }) => {
                   <h3 className="fieldYear">{fieldValue}</h3>
                   <ul>
                     {nodes.length &&
-                      nodes.map(({ frontmatter, fields }) => {
-                        const {title, createdAt, source} = frontmatter
-                        const { slug } = fields
+                      nodes.map(({ frontmatter }) => {
+                        const {title, createdAt, source, slug} = frontmatter
                         const path = source === `notion` ? `/blog/${kebabCase(slug)}` : `/${kebabCase(slug)}`
                         return (
                           <li key={title}>
@@ -82,6 +81,7 @@ export const tagQuery = graphql`
             title
             createdAt(formatString: "MM-DD")
             source
+            slug
           }
         }
       }

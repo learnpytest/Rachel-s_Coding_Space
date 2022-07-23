@@ -10,6 +10,8 @@ import Seo from "../components/seo"
 import PictureBySharp from "../components/PictureBySharp"
 import * as blogPostStyle from "./blog-post.module.css"
 import kebabCase from "lodash/kebabCase"
+import CodeNode from "../components/codeNode"
+import AlertNode from "../components/alertNode"
 
 const BlogPostTemplate = ({ data, location, pageContext }) => {
   const [state, setState] = React.useState({
@@ -18,7 +20,7 @@ const BlogPostTemplate = ({ data, location, pageContext }) => {
 
   React.useEffect(() => {
     const handleScroll = () => {
-      const isScrolled = window.scrollY > 500
+      const isScrolled = window.scrollY > 200
       if (isScrolled !== state.scrolled) {
         setState({
           scrolled: !state.scrolled,
@@ -34,7 +36,6 @@ const BlogPostTemplate = ({ data, location, pageContext }) => {
 
   const post = data.mdx
   const remoteFileNodeId = post?.fields?.remoteFileNodeId
-  // const postMdx = data.mdx
 
   const siteTitle = data.site.siteMetadata?.title || `Title`
   const { previous, next } = data
@@ -57,6 +58,9 @@ const BlogPostTemplate = ({ data, location, pageContext }) => {
     PictureBySharp: props => (
       <PictureBySharp {...props} remoteFileNodeId={remoteFileNodeId} />
     ),
+    Alert: AlertNode,
+    pre: CodeNode,
+    wrapper: ({ children }) => <>{children}</>,
   }
 
   return (
