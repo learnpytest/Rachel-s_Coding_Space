@@ -14,6 +14,7 @@ Check more Gatsby Starters [official and community-created starters](https://www
     Use the Gatsby CLI ([install instructions](https://www.gatsbyjs.com/docs/tutorial/part-0/#gatsby-cli))
 
  **Download project.**
+
    ```shell
    git clone https://github.com/learnpytest/Rachel-s_Coding_Space.git
    cd {project_name}
@@ -22,16 +23,16 @@ Check more Gatsby Starters [official and community-created starters](https://www
 
  **Start developing.**
 
-    Navigate into site’s directory and run npm script.
+ Navigate into site’s directory and run npm script.
 
     ```shell
     cd {project_name}
     npm run develop
     ```
 
-    The site is now running at `http://localhost:8000`!
+  The site is now running at `http://localhost:8000`!
 
-    The second link: _`http://localhost:8000/___graphql`_. is a tool to experiment with querying data. For more info, refer to [Gatsby Tutorial](https://www.gatsbyjs.com/docs/tutorial/part-4/#use-graphiql-to-explore-the-data-layer-and-write-graphql-queries)._
+  The second link: _`http://localhost:8000/___graphql`_. is a tool to experiment with querying data. For more info, refer to [Gatsby Tutorial](https://www.gatsbyjs.com/docs/tutorial/part-4/#use-graphiql-to-explore-the-data-layer-and-write-graphql-queries)._
 
 ## 🚀 Quick look at directories in this project
 
