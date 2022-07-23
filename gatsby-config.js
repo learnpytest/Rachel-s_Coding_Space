@@ -38,7 +38,7 @@ const queries = [
               !!paragraphChunk.trim() && paragraphChunk.trim() !== "\n"
           )
 
-        // const paragraphChunks = striptags(post.html, [], "XXX_SPLITER").split("XXX_SPLITER").filter(chnk => !!chnk.trim() && chnk.trim()!== '\n' && chnk.trim() !== '(' && chnk.trim() !== ')' && chnk.trim() !== ':' && chnk.trim() !== '{' && chnk.trim() !== '}' && chnk.trim() !== ',' && chnk.trim() !== '=>' && chnk.trim() !== ',')
+   
 
         const chunks = paragraphChunks.map((chnk, index) => ({
           id: post.id + index,

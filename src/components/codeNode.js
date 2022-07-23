@@ -1,7 +1,7 @@
 import React, { useState } from "react"
 import Highlight, { defaultProps } from "prism-react-renderer"
 import rangeParser from "parse-numeric-range"
-
+import theme from "prism-react-renderer/themes/nightOwl"
 import * as codeNodeStyle from "./code-node.module.css"
 
 const CodeNode = props => {
@@ -34,7 +34,7 @@ const CodeNode = props => {
 
   return (
     <div className={codeNodeStyle.codeNode}>
-      <Highlight {...defaultProps} code={code} language={language}>
+      <Highlight {...defaultProps} code={code} theme={theme} language={language}>
         {({ className, style, tokens, getLineProps, getTokenProps }) => {
           style.padding = "0 1em 1em 1em"
           style.borderRadius = "8px"
@@ -43,7 +43,7 @@ const CodeNode = props => {
               <header className={codeNodeStyle.codeHeader}>
                 <div className={codeNodeStyle.text}>
                   <div className={codeNodeStyle.language}>
-                    {language || "unknown language"}
+                    {language.toUpperCase() || "unknown language"}
                   </div>
                   {
                     <div className={codeNodeStyle.file}>
@@ -64,10 +64,9 @@ const CodeNode = props => {
                       {...getLineProps({ line, key: i })}
                       style={{
                         background: hightlightRows(i)
-                          ? "#FFD68A"
+                          ? "#3B3B3B"
                           : "transparent",
                         opacity: "0.9",
-                        color: hightlightRows(i) && "#2A2734",
                       }}
                       className={codeNodeStyle.codeLine}
                     >
