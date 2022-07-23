@@ -25,10 +25,10 @@ Check more Gatsby Starters [official and community-created starters](https://www
 
  Navigate into site’s directory and run npm script.
 
-    ```shell
-    cd {project_name}
-    npm run develop
-    ```
+   ```shell
+   cd {project_name}
+   npm run develop
+   ```
 
   The site is now running at `http://localhost:8000`!
 
