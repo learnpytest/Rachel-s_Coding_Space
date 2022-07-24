@@ -56,6 +56,8 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
       }
     `
   )
+  
+  console.log(result)
 
   if (result.errors) {
     reporter.panicOnBuild(
@@ -75,22 +77,26 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
 
   function takeTemplateToCreatePage(_data, _pathPrefix) {
     if (!_data.length) return
-    _data.forEach((post, index) => {
-      const previousPostId = index === 0 ? null : _data[index - 1].id
-      const nextPostId = index === _data.length - 1 ? null : _data[index + 1].id
-      const path = `${_pathPrefix}/${_.kebabCase(post.frontmatter?.slug)}`
+    try {
+      _data.forEach((post, index) => {
+        const previousPostId = index === 0 ? null : _data[index - 1].id
+        const nextPostId = index === _data.length - 1 ? null : _data[index + 1].id
+        const path = `${_pathPrefix}/${_.kebabCase(post.frontmatter?.slug)}`
 
-      createPage({
-        path,
-        component: blogPost,
-        context: {
-          previousPostId,
-          nextPostId,
-          slug: post.frontmatter?.slug,
-          timeToRead: post.timeToRead,
-        },
+        createPage({
+          path,
+          component: blogPost,
+          context: {
+            previousPostId,
+            nextPostId,
+            slug: post.frontmatter?.slug,
+            timeToRead: post.timeToRead,
+          },
+        })
       })
-    })
+    } catch(err){
+      console.log("createPage error", err)
+    }
   }
 
   takeTemplateToCreatePage(postsNotFromNotion, "")
