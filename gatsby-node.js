@@ -15,7 +15,10 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
   const taggedPostsPage = path.resolve(`./src/templates/tag-page.js`)
 
   //   // Get all markdown blog posts sorted by date
-  const result = await graphql(
+  let result
+  
+
+  result = await graphql(
     `
       {
         postsFromNotion: allMdx(
@@ -56,20 +59,23 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
       }
     `
   )
-  
-  console.log(result)
+  console.log("result", result)
 
+  try {
   if (result.errors) {
     reporter.panicOnBuild(
       `There was an error loading your blog posts`,
       result.errors
     )
-    return
+    // return
   }
-
+} catch(err){
+  console.log(err)
+}
   const postsNotFromNotion = result.data.postsNotFromNotion.nodes
   const postsFromNotion = result.data.postsFromNotion.nodes
   const tagsGroup = result.data.tagsGroup.group
+
 
   //   // Create blog posts pages
   //   // But only if there's at least one markdown file found at "content/blog" (defined in gatsby-config.js)
@@ -101,6 +107,7 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
 
   takeTemplateToCreatePage(postsNotFromNotion, "")
   takeTemplateToCreatePage(postsFromNotion, "/blog")
+
 
   //   // Create pages that are already categorized by tags
   //   // But only if there's at least one tag found at tag group
@@ -182,30 +189,30 @@ exports.createSchemaCustomization = ({ actions }) => {
   // This way the "MarkdownRemark" queries will return `null` even when no
   // blog posts are stored inside "content/blog" instead of returning an error
   createTypes(`
-    type SiteSiteMetadata @dontInfer {
+    type SiteSiteMetadata {
       author: Author
       siteUrl: String
       social: Social
       nav: Nav
     }
 
-    type Author @dontInfer {
+    type Author {
       name: String
       summary: String
     }
 
-    type Social @dontInfer {
+    type Social {
       twitter: String
     }
 
-    type Nav @dontInfer {
+    type Nav {
       portfolio: String
       blog: String
       categories: String
       rss: String
     }
 
-    type Frontmatter @dontInfer {
+    type Frontmatter {
       title: String
       createdAt: Date @dateformat
       year: String
@@ -217,7 +224,7 @@ exports.createSchemaCustomization = ({ actions }) => {
       embeddedImagesRemote: String
     }
 
-    type Fields @dontInfer {
+    type Fields {
       remoteFileNodeId: [String]
     }
   `)
