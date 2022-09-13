@@ -8,6 +8,9 @@ const _ = require("lodash")
 exports.createPages = async ({ graphql, actions, reporter }) => {
   const { createPage } = actions
 
+  //   // Define a template for project
+  const projectPage = path.resolve(`./src/templates/project.js`)
+
   //   // Define a template for blog post
   const blogPost = path.resolve(`./src/templates/blog-post.js`)
 
@@ -16,11 +19,19 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
 
   //   // Get all markdown blog posts sorted by date
   let result
-  
 
   result = await graphql(
     `
       {
+        allSanityProject {
+          edges {
+            node {
+              slug {
+                current
+              }
+            }
+          }
+        }
         postsFromNotion: allMdx(
           sort: { fields: [frontmatter___createdAt], order: DESC }
           filter: { frontmatter: { source: { in: "notion" } } }
@@ -59,23 +70,33 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
       }
     `
   )
-  console.log("result", result)
 
   try {
-  if (result.errors) {
-    reporter.panicOnBuild(
-      `There was an error loading your blog posts`,
-      result.errors
-    )
-    // return
+    if (result.errors) {
+      reporter.panicOnBuild(
+        `There was an error loading your blog posts`,
+        result.errors
+      )
+      // return
+    }
+  } catch (err) {
+    console.log(err)
   }
-} catch(err){
-  console.log(err)
-}
+  const projects = result.data.allSanityProject.edges.map(({ node }) => node)
   const postsNotFromNotion = result.data.postsNotFromNotion.nodes
   const postsFromNotion = result.data.postsFromNotion.nodes
   const tagsGroup = result.data.tagsGroup.group
 
+  //   // Create projects pages
+  projects.forEach(project => {
+    createPage({
+      path: project.slug.current,
+      component: projectPage, //
+      context: {
+        slug: project.slug.current,
+      },
+    })
+  })
 
   //   // Create blog posts pages
   //   // But only if there's at least one markdown file found at "content/blog" (defined in gatsby-config.js)
@@ -86,7 +107,8 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
     try {
       _data.forEach((post, index) => {
         const previousPostId = index === 0 ? null : _data[index - 1].id
-        const nextPostId = index === _data.length - 1 ? null : _data[index + 1].id
+        const nextPostId =
+          index === _data.length - 1 ? null : _data[index + 1].id
         const path = `${_pathPrefix}/${_.kebabCase(post.frontmatter?.slug)}`
 
         createPage({
@@ -100,14 +122,13 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
           },
         })
       })
-    } catch(err){
+    } catch (err) {
       console.log("createPage error", err)
     }
   }
 
   takeTemplateToCreatePage(postsNotFromNotion, "")
   takeTemplateToCreatePage(postsFromNotion, "/blog")
-
 
   //   // Create pages that are already categorized by tags
   //   // But only if there's at least one tag found at tag group
@@ -172,7 +193,9 @@ exports.onCreateNode = async ({
         await createNodeField({
           name: `remoteFileNodeId`,
           node,
-          value: embeddedImagesRemote ? embeddedImagesRemote.map(image => image.children[0]) : [],
+          value: embeddedImagesRemote
+            ? embeddedImagesRemote.map(image => image.children[0])
+            : [],
         })
       }
     }

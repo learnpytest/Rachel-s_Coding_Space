@@ -114,6 +114,13 @@ module.exports = {
       },
     },
     {
+      resolve: 'gatsby-source-sanity',
+      options: {
+        projectId: '264x5s83',
+        dataset: 'production',
+      },
+    },
+    {
       resolve: `gatsby-plugin-algolia`,
       options: {
         appId: process.env.ALGOLIA_APP_ID,

@@ -4,6 +4,8 @@ import { Link } from "gatsby"
 
 import Nav from "./nav"
 import DialogHeader from "./dialogHeader"
+import { Helmet } from "react-helmet"
+
 import * as layoutStyle from "./layout.module.css"
 
 const Layout = ({ location, title, children }) => {
@@ -55,6 +57,14 @@ const Layout = ({ location, title, children }) => {
 
   return (
     <div className="global-wrapper" data-is-root-path={isRootPath}>
+      <Helmet>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+          href="https://fonts.googleapis.com/css2?family=MonteCarlo&display=swap"
+          rel="stylesheet"
+        />
+      </Helmet>
       <header className="global-header" data-activescrolling={state.scrolled}>
         {header}
         <DialogHeader />

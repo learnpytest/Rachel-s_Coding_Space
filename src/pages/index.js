@@ -6,21 +6,22 @@ import Layout from "../components/layout"
 import Seo from "../components/seo"
 import AlgoliaSearchSite from "../components/algoliaSearchSite"
 
+import { GatsbyImage } from "gatsby-plugin-image"
+
 import * as indexStyle from "./index.module.css"
 
 const PageIndex = ({ data, location }) => {
   const siteTitle = data.site.siteMetadata?.title || `Title`
-  const posts = data.allMdx.nodes
+  const projects = data.allSanityProject?.edges
 
-  if (posts.length === 0) {
+  if (projects.length === 0) {
     return (
       <Layout location={location} title={siteTitle}>
-        <Seo title="All posts" />
+        <Seo title="All projects" />
         <Bio />
         <p>
-          No blog posts found. Add markdown posts to "content/blog" (or the
-          directory you specified for the "gatsby-source-filesystem" plugin in
-          gatsby-config.js).
+          No projects found. Add project to the sanity project you specified for
+          the "gatsby-source-sanity" plugin in gatsby-config.js.
         </p>
       </Layout>
     )
@@ -28,64 +29,61 @@ const PageIndex = ({ data, location }) => {
 
   return (
     <Layout location={location} title={siteTitle}>
-      <Seo title="All posts" />
+      <Seo title="All projects" />
       <Bio />
       <AlgoliaSearchSite />
-      <ol style={{ listStyle: `none` }}>
-        {posts.map(post => {
-          const { title, slug, createdAt, description } = post.frontmatter
+      <ul className={`${indexStyle.list}`}>
+        {projects.map(({ node: project }) => {
           return (
-            <li key={slug} style={{position: "relative"}}>
-              <article
-                className={`${indexStyle.postListItem}`}
-                itemScope
-                itemType="http://schema.org/Article"
-              >
-                <header>
-                  <h2>
-                    <Link to={slug} itemProp="url">
-                      <span itemProp="headline">{title}</span>
-                    </Link>
-                  </h2>
-                  <small>{createdAt}</small>
-                </header>
-                <section>
-                  <p
-                    dangerouslySetInnerHTML={{
-                      __html: description,
-                    }}
-                    itemProp="description"
+            <div className={`${indexStyle.foldBox}`}>
+              <div className={`${indexStyle.foldGroup}`}>
+                <div className={`${indexStyle.foldItem}`}>
+                  <div className={`${indexStyle.foldItem}`}>
+                    <div className={`${indexStyle.foldItem}`}>
+                      <div className={`${indexStyle.foldItem}`}></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className={`${indexStyle.text}`}>
+                <li key={project.slug.current} className={`${indexStyle.item}`}>
+                  <GatsbyImage
+                    image={project.image.asset.gatsbyImageData}
+                    alt={project.title}
                   />
-                </section>
-              </article>
-              <Link to={slug} itemProp="url" style={{position: "absolute", top: "-10px", left: "-10px", bottom: "-10px", right: "-10px"}} className="backdrop"></Link>
-            </li>
+                  <h3><Link to={project.slug.current}>{project.title}</Link></h3>
+                </li>
+              </div>
+            </div>
           )
         })}
-      </ol>
+      </ul>
     </Layout>
   )
 }
 
 export default PageIndex
 
-export const pageQuery = graphql`
+export const projectListQuery = graphql`
   query {
     site {
       siteMetadata {
         title
       }
     }
-    allMdx(
-      sort: { fields: [frontmatter___createdAt], order: DESC }
-      filter: {frontmatter: {source: {nin: "notion"}}}
-      ) {
-      nodes {
-        frontmatter {
-          createdAt(formatString: "MMMM DD, YYYY")
+    allSanityProject {
+      edges {
+        node {
           title
           description
-          slug
+          slug {
+            current
+          }
+          image {
+            asset {
+              gatsbyImageData(fit: FILLMAX, placeholder: BLURRED)
+            }
+          }
         }
       }
     }

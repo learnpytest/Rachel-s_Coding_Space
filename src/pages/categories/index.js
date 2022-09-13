@@ -11,18 +11,19 @@ const TagsIndex = ({ data, location }) => {
   const tags = data.allMdx.group
   let newTagsGroup = []
   let tagCount = {}
-let count = 0
-const dataCounterByKey = (data, key) => {
-  return data.reduce((previous, current) => {
-    if(typeof tagCount[key] !== "number") {
-      tagCount[key] = 0
-    }
-    if(current["fieldValue"].toLowerCase().includes(key.toLowerCase())) {
-      tagCount[key] += current.totalCount
-    }
-  }, data[0])
-}
- 
+  console.log("data", data)
+
+  const dataCounterByKey = (data, key) => {
+    return data.reduce((previous, current) => {
+      if (typeof tagCount[key] !== "number") {
+        tagCount[key] = 0
+      }
+      if (current["fieldValue"].toLowerCase().includes(key.toLowerCase())) {
+        tagCount[key] += current.totalCount
+      }
+    }, data[0])
+  }
+
   if (tags.length === 0) {
     return (
       <Layout location={location} title={siteTitle}>
@@ -42,10 +43,9 @@ const dataCounterByKey = (data, key) => {
     newTagsGroup = [...new Set([...newTagsGroup, ...tagArray])]
   })
 
-newTagsGroup.forEach((key) => {
-  dataCounterByKey(tags, key)
-})
-
+  newTagsGroup.forEach(key => {
+    dataCounterByKey(tags, key)
+  })
 
   return (
     <Layout location={location} title={siteTitle}>
@@ -53,7 +53,7 @@ newTagsGroup.forEach((key) => {
       <Bio />
       <h2>Total {newTagsGroup.length} Categories</h2>
       <ul style={{ listStyle: `none` }}></ul>
-      
+
       {newTagsGroup.map((tag, index) => {
         return (
           <li style={{ listStyle: `none`}} key={ tag }>
@@ -65,9 +65,7 @@ newTagsGroup.forEach((key) => {
   )
 }
 
-export default TagsIndex
-
-export const blogQuery = graphql`
+export const categoryQuery = graphql`
   query {
     site {
       siteMetadata {
@@ -82,3 +80,5 @@ export const blogQuery = graphql`
     }
   }
 `
+
+export default TagsIndex
