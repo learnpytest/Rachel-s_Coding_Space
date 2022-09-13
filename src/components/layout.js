@@ -70,7 +70,7 @@ const Layout = ({ location, title, children }) => {
         <DialogHeader />
       </header>
       <main>{children}</main>
-      <footer>
+      <footer style={{textAlign: "center"}}>
         © {new Date().getFullYear()}, Built with
         {` `}
         <a href="https://www.gatsbyjs.com">Gatsby</a>{" "}•{" "}

@@ -23,7 +23,7 @@ const AlgoliaSearchSite = () => {
 
   return (
       <InstantSearch searchClient={searchClient} indexName="blog">
-        <SearchBox placeholder="搜尋全站文章..." onInput={handleSearchInput} onBlur={cancelSearch}/>
+        <SearchBox placeholder="搜尋全站文章..." onInput={handleSearchInput} onBlur={cancelSearch}  style={{textAlign:"center"}}/>
         { searchState && 
            <Hits hitComponent={ PostPreview } className={`${algoliaSearchSiteStyle.aisHits}`}/>
 
