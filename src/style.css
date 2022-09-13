@@ -89,6 +89,7 @@
 }
 
 html {
+  text-align: center;
   line-height: var(--lineHeight-normal);
   font-size: var(--fontSize-root);
   -webkit-font-smoothing: antialiased;
@@ -169,7 +170,6 @@ h6 {
 h1>a {
   display: block;
   color: inherit;
-  text-align: center;
   text-decoration: none;
 }
 
