@@ -11,7 +11,7 @@ const TagsIndex = ({ data, location }) => {
   const tags = data.allMdx.group
   let newTagsGroup = []
   let tagCount = {}
-  console.log("data", data)
+  console.log("data", tags)
 
   const dataCounterByKey = (data, key) => {
     return data.reduce((previous, current) => {
@@ -65,6 +65,8 @@ const TagsIndex = ({ data, location }) => {
   )
 }
 
+export default TagsIndex
+
 export const categoryQuery = graphql`
   query {
     site {
@@ -81,4 +83,3 @@ export const categoryQuery = graphql`
   }
 `
 
-export default TagsIndex

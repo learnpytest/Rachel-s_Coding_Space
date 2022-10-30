@@ -138,11 +138,12 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
     tagsGroup.forEach(tags => {
       const tagsArray = tags.fieldValue.split(",")
       newTagsGroup = [...new Set([...tagsArray, ...newTagsGroup])]
+      console.log(tags)
     })
 
     newTagsGroup.forEach(tag => {
       createPage({
-        path: `/categories/${_.kebabCase(tag)}/`,
+        path: `/categories/${_.kebabCase(tag)}`,
         component: taggedPostsPage,
         context: {
           tag: `/${tag}/`,

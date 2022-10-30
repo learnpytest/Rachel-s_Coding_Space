@@ -70,11 +70,12 @@ const Layout = ({ location, title, children }) => {
         <DialogHeader />
       </header>
       <main>{children}</main>
-      <footer style={{textAlign: "center"}}>
+      <footer style={{ textAlign: "center" }}>
         © {new Date().getFullYear()}, Built with
         {` `}
-        <a href="https://www.gatsbyjs.com">Gatsby</a>{" "}•{" "}
-        <a href="https://www.pinterest.com/">Image Source</a>
+        <a href="https://www.gatsbyjs.com">Gatsby</a> •{" "}
+        <a href="https://www.pinterest.com/">Image </a> {" "} / {" "} 
+        <a href="https://www.emojipng.com/search/pokemon%20emojis/2/">Emoji Source</a>
       </footer>
     </div>
   )

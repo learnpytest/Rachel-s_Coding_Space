@@ -9,7 +9,6 @@ export function PostPreview ({ hit }) {
   //  const title = hit.title || "NoTitle"
   const { source, slug } = hit
   const path = source === `notion` ? `/blog/${kebabCase(slug)}` : `/${kebabCase(slug)}`
-
   return (
     <div style={{ position: "relative" }}>
       <article

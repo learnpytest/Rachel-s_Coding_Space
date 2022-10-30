@@ -4,69 +4,69 @@ require("dotenv").config({
 
 const striptags = require("striptags")
 
-const blogAlgoliaQuery = `
-  query {
-    pages: allMarkdownRemark(limit: 1000) {
-      nodes {
-        id
-        excerpt
-        frontmatter {
-          title
-          date: createdAt(formatString: "MMMM DD, YYYY")
-          description
-          source
-          slug
-        }
-        html
-      }
-    }
-  }
-`
-const queries = [
-  {
-    query: blogAlgoliaQuery,
-    transformer: ({ data }) => {
-      // 1 break each post into an array of searchable chunks
-      // 2 return a flattened array of all indices
-      return data.pages.nodes.reduce((indices, post) => {
-        // 1 description (if it exists)
-        // 2 each paragraph
-        const paragraphChunks = striptags(post.html, ["\n"])
-          .split("\n")
-          .filter(
-            paragraphChunk =>
-              !!paragraphChunk.trim() && paragraphChunk.trim() !== "\n"
-          )
+// const blogAlgoliaQuery = `
+//   query {
+//     pages: allMarkdownRemark(limit: 1000) {
+//       nodes {
+//         id
+//         excerpt
+//         frontmatter {
+//           title
+//           date: createdAt(formatString: "MMMM DD, YYYY")
+//           description
+//           source
+//           slug
+//         }
+//         html
+//       }
+//     }
+//   }
+// `
+// const queries = [
+//   {
+//     query: blogAlgoliaQuery,
+//     transformer: ({ data }) => {
+//       // 1 break each post into an array of searchable chunks
+//       // 2 return a flattened array of all indices
+//       return data.pages.nodes.reduce((indices, post) => {
+//         // 1 description (if it exists)
+//         // 2 each paragraph
+//         const paragraphChunks = striptags(post.html, ["\n"])
+//           .split("\n")
+//           .filter(
+//             paragraphChunk =>
+//               !!paragraphChunk.trim() && paragraphChunk.trim() !== "\n"
+//           )
 
    
 
-        const chunks = paragraphChunks.map((chnk, index) => ({
-          id: post.id + index,
-          slug: post.frontmatter.slug,
-          date: post.frontmatter.date,
-          title: post.frontmatter.title,
-          source: post.frontmatter.source,
-          excerpt: chnk,
-        }))
+//         const chunks = paragraphChunks.map((chnk, index) => ({
+//           id: post.id + index,
+//           slug: post.frontmatter.slug,
+//           date: post.frontmatter.date,
+//           title: post.frontmatter.title,
+//           source: post.frontmatter.source,
+//           excerpt: chnk,
+//         }))
 
-        if (post.frontmatter.description) {
-          chunks.push({
-            id: post.id + new Date().getTime(),
-            slug: post.frontmatter.slug,
-            date: post.frontmatter.date,
-            title: post.frontmatter.title,
-            source: post.frontmatter.source,
-            excerpt: post.excerpt,
-          })
-        }
+//         if (post.frontmatter.description) {
+//           chunks.push({
+//             id: post.id + new Date().getTime(),
+//             slug: post.frontmatter.slug,
+//             date: post.frontmatter.date,
+//             title: post.frontmatter.title,
+//             source: post.frontmatter.source,
+//             excerpt: post.excerpt,
+//           })
+//         }
 
-        const filtered = chunks.filter(chnk => !!chnk.excerpt)
+//         const filtered = chunks.filter(chnk => !!chnk.excerpt)
 
-        return [...indices, ...filtered]
-      }, [])
-    },
-  },
-]
+//         return [...indices, ...filtered]
+//       }, [])
+//     },
+//   },
+// ]
 
 module.exports = {
   siteMetadata: {
@@ -89,6 +89,13 @@ module.exports = {
     },
   },
   plugins: [
+    {
+      resolve: "gatsby-plugin-google-tagmanager",
+      options: {
+        id: "GTM-KTJT6X4",
+        includeInDevelopment: true,
+      }
+    },
     `gatsby-plugin-preact`,
     {
       resolve: `gatsby-source-filesystem`,
@@ -116,19 +123,27 @@ module.exports = {
     {
       resolve: 'gatsby-source-sanity',
       options: {
-        projectId: '264x5s83',
+        projectId: process.env.GATSBY_SANITY_PROJECT_ID,
         dataset: 'production',
       },
     },
     {
       resolve: `gatsby-plugin-algolia`,
-      options: {
+      // options: {
+      //   appId: process.env.ALGOLIA_APP_ID,
+      //   // Use Admin API key without GATSBY_ prefix, so that the key isn't exposed in the application
+      //   // Tip: use Search API key with GATSBY_ prefix to access the service from within components
+      //   apiKey: process.env.ALGOLIA_API_KEY,
+      //   indexName: process.env.ALGOLIA_INDEX_NAME, // for all queries
+      //   queries,
+      //   chunkSize: 10000, // default: 1000
+      // },
+        options: {
         appId: process.env.ALGOLIA_APP_ID,
         // Use Admin API key without GATSBY_ prefix, so that the key isn't exposed in the application
         // Tip: use Search API key with GATSBY_ prefix to access the service from within components
         apiKey: process.env.ALGOLIA_API_KEY,
-        indexName: process.env.ALGOLIA_INDEX_NAME, // for all queries
-        queries,
+        queries: require("./src/utils/algolia-queries"),
         chunkSize: 10000, // default: 1000
       },
     },
@@ -172,12 +187,6 @@ module.exports = {
       },
     },
     `gatsby-transformer-sharp`,
-    // {
-    //   resolve: `gatsby-plugin-google-analytics`,
-    //   options: {
-    //     trackingId: `ADD YOUR TRACKING ID HERE`,
-    //   },
-    // },
     {
       resolve: `gatsby-plugin-mdx`,
       options: {

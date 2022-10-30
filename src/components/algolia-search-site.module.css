@@ -3,7 +3,8 @@
   position: absolute;
   z-index: 3;
   right: 20%;
-  left: 0;
+  left: 1.5rem;
+  margin-top: -1.5rem;
   background-color: var(--color-background-004675);
   box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.5);
 }
@@ -14,4 +15,26 @@
 
 .ais-Hits ol {
   list-style: none;
+}
+
+.search-box form {
+  display: flex;
+  padding: 0 1.5em 0 1.5em;
+  margin-bottom: 1.5rem;
+}
+
+.search-box button {
+  display: none;
+}
+.search-box input {
+  flex-grow: 1;
+  border-radius: 50px;
+  padding: 0.8em 1em;
+  outline: none;
+  border: none;
+  background-color: #eee;
+  line-height: 1.3rem;
+  font-size: 1.3rem;
+  letter-spacing: var(--spacing-1);
+  color: #FE5B30;
 }
