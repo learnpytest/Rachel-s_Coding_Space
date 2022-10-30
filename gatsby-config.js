@@ -96,7 +96,7 @@ module.exports = {
         includeInDevelopment: true,
       }
     },
-    `gatsby-plugin-preact`,
+    // `gatsby-plugin-preact`,
     {
       resolve: `gatsby-source-filesystem`,
       options: {
