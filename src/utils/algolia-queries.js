@@ -48,9 +48,7 @@ function pageToAlgoliaRecord(indices, post) {
               !!paragraphChunk.trim() && paragraphChunk.trim() !== "\n"
           )
 
-   
-
-        const chunks = paragraphChunks.map((chnk, index) => ({
+        let chunks = paragraphChunks.map((chnk, index) => ({
           id: post.id + index,
           slug: post.frontmatter.slug,
           date: post.frontmatter.date,
@@ -59,7 +57,7 @@ function pageToAlgoliaRecord(indices, post) {
           excerpt: chnk,
         }))
 
-        if (post.frontmatter.description) {
+        if (!!post.frontmatter.description) {
           chunks.push({
             id: post.id + new Date().getTime(),
             slug: post.frontmatter.slug,
@@ -71,7 +69,7 @@ function pageToAlgoliaRecord(indices, post) {
         }
 
         const filtered = chunks.filter(chnk => !!chnk.excerpt)
-
+        console.log("indices", indices, "filtered", filtered)
         return [...indices, ...filtered]
 }
 

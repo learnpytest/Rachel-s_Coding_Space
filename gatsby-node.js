@@ -138,7 +138,6 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
     tagsGroup.forEach(tags => {
       const tagsArray = tags.fieldValue.split(",")
       newTagsGroup = [...new Set([...tagsArray, ...newTagsGroup])]
-      console.log(tags)
     })
 
     newTagsGroup.forEach(tag => {
@@ -190,7 +189,7 @@ exports.onCreateNode = async ({
             }
           })
         )
-        console.log("remoteImageArray", remoteImageArray)
+
         await createNodeField({
           name: `remoteFileNodeId`,
           node,
@@ -201,6 +200,8 @@ exports.onCreateNode = async ({
       }
     }
   }
+
+  console.log("check node", node)
 }
 
 exports.createSchemaCustomization = ({ actions }) => {
